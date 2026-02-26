@@ -16,5 +16,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('/doctor/dashboard', [DashboardController::class, 'doctorDashboard'])->name('doctor.dashboard');
     Route::get('/patient/dashboard', [DashboardController::class, 'patientDashboard'])->name('patient.dashboard');
+    
     Route::get('/latihan', [LatihanController::class, 'index'])->name('latihan');
+    Route::post('/latihan/save', [LatihanController::class, 'saveSession'])->name('latihan.save');
 });
