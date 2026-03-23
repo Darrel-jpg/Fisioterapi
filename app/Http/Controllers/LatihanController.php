@@ -4,29 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SessionLog;
+use App\Models\Assignment;
+use Illuminate\Support\Facades\Auth;
 
 class LatihanController extends Controller
 {
     public function index()
     {
-        return view('latihan');
+        $assignment_id = 1; 
+        return view('latihan', compact('assignment_id'));
     }
 
     public function saveSession(Request $request)
     {
-        $validated = $request->validate([
-            'assignment_id' => 'required|integer',
-            'achieved_reps' => 'required|integer',
+        $request->validate([
+            'assignment_id' => 'required|exists:assignments,id',
+            'achieved_reps' => 'required|numeric',
             'max_angle_reached' => 'required|numeric',
             'accuracy_score' => 'required|numeric',
-            'duration_seconds' => 'required|integer'
+            'duration_seconds' => 'required|numeric',
         ]);
 
-        SessionLog::create($validated);
+        SessionLog::create([
+            'assignment_id' => $request->assignment_id,
+            'achieved_reps' => $request->achieved_reps,
+            'max_angle_reached' => $request->max_angle_reached,
+            'accuracy_score' => $request->accuracy_score,
+            'duration_seconds' => $request->duration_seconds,
+        ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Sesi terapi berhasil disimpan'
+            'message' => 'Data latihan berhasil disimpan'
         ]);
     }
 }

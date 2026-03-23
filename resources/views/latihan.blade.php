@@ -68,6 +68,7 @@
         let secondsElapsed = 0;
         let timerInterval = null;
         let isReady = false;
+        let assignmentId = {{ $assignment_id ?? 1 }};
 
         const synth = window.speechSynthesis;
         let isSpeaking = false;
@@ -196,15 +197,18 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    assignment_id: 1, 
+                    assignment_id: assignmentId, 
                     achieved_reps: reps,
-                    max_angle_reached: maxAngleReached,
-                    accuracy_score: accuracy,
+                    max_angle_reached: Math.round(maxAngleReached),
+                    accuracy_score: parseFloat(accuracy.toFixed(2)),
                     duration_seconds: secondsElapsed
                 })
             })
             .then(response => response.json())
             .then(data => {
+                window.location.href = '{{ route('patient.dashboard') }}';
+            })
+            .catch(error => {
                 window.location.href = '{{ route('patient.dashboard') }}';
             });
         });
