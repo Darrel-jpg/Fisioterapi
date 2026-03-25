@@ -34,35 +34,52 @@ class DashboardController extends Controller
         return view('doctor.dashboard', compact('totalPatients', 'totalSessions', 'avgAccuracy', 'patientsList'));
     }
 
-    public function storePatient(Request $request)
+public function storePatient(Request $request)
     {
         if (Auth::user()->role !== 'doctor') abort(403);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'date_of_birth' => 'required|date',
-            'gender' => 'required|in:male,female',
-            'medical_diagnosis' => 'required|string',
-        ]);
+        // 1. Tangkap semua error validasi untuk melihat apa yang salah
+        try {
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:6',
+                'date_of_birth' => 'required|date',
+                'gender' => 'required|in:male,female',
+                // PERBAIKAN DI SINI: medical_diagnosis boleh kosong/opsional jika tidak diisi lengkap dari form
+                'medical_diagnosis' => 'nullable|string', 
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Jika gagal validasi, kembalikan error spesifiknya
+            return back()->withErrors($e->errors())->withInput();
+        }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'patient',
-        ]);
+        try {
+            // 2. Gunakan DB Transaction agar jika satu tabel gagal, yang lain di-rollback
+            \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
+                
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'role' => 'patient', // Pastikan kolom role ini ada di tabel users kamu
+                ]);
 
-        PatientProfile::create([
-            'user_id' => $user->id,
-            'doctor_id' => Auth::id(),
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'medical_diagnosis' => $request->medical_diagnosis,
-        ]);
+                PatientProfile::create([
+                    'user_id' => $user->id,
+                    'doctor_id' => Auth::id(),
+                    'date_of_birth' => $request->date_of_birth,
+                    'gender' => $request->gender,
+                    'medical_diagnosis' => $request->medical_diagnosis ?? 'Belum ada diagnosis',
+                ]);
+            });
 
-        return back()->with('success', 'Pasien '.$request->name.' berhasil ditambahkan!');
+            return back()->with('success', 'Pasien '.$request->name.' berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            // 3. Menangkap error database (misalnya Foreign Key Constraint atau kolom tidak ada)
+            return back()->withErrors(['db_error' => 'Gagal menyimpan ke database: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function patientDashboard()
@@ -86,5 +103,38 @@ class DashboardController extends Controller
         })->avg('accuracy_score') ?? 0;
 
         return view('patient.dashboard', compact('activeAssignments', 'recentSessions', 'avgAccuracy'));
+    }
+    public function storeAssignment(Request $request)
+    {
+        if (Auth::user()->role !== 'doctor') abort(403);
+
+        $request->validate([
+            'patient_id' => 'required|exists:users,id',
+            'exercise_name' => 'required|string',
+            'target_reps' => 'required|integer|min:1',
+            'sessions_per_week' => 'required|integer|min:1|max:7',
+        ]);
+
+        // Cari atau buat jenis latihan baru
+        $exercise = \App\Models\Exercise::firstOrCreate(
+            ['name' => $request->exercise_name],
+            [
+                'description' => 'Latihan ' . $request->exercise_name . ' untuk pemulihan.',
+                'target_joint' => 'custom',
+                'target_angle' => 160,
+            ]
+        );
+
+        // Buat tugas (Assignment) baru untuk pasien
+        Assignment::create([
+            'doctor_id' => Auth::id(),
+            'patient_id' => $request->patient_id,
+            'exercise_id' => $exercise->id,
+            'target_reps' => $request->target_reps,
+            'due_date' => \Carbon\Carbon::now()->addDays(7),
+            'is_completed' => false,
+        ]);
+
+        return back()->with('success', 'Program latihan berhasil diberikan ke pasien!');
     }
 }

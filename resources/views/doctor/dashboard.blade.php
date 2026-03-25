@@ -742,30 +742,34 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-                <form id="formAddProgram" class="p-6">
+<form id="formAddProgram" action="{{ route('doctor.assignment.store') }}" method="POST" class="p-6">
+                    @csrf
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-bold text-blue-900 mb-1">Pilih Pasien</label>
-                            <select id="progPatient" class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                            <select name="patient_id" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                @foreach($patientsList as $patient)
+                                    <option value="{{ $patient->user_id }}">{{ $patient->user->name }} ({{ $patient->medical_diagnosis }})</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-blue-900 mb-1">Jenis Gerakan AI</label>
-                            <select class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                                <option>Arm Curl (Tekuk Siku)</option>
-                                <option>Knee Extension (Ekstensi Lutut)</option>
-                                <option>Shoulder Abduction (Angkat Bahu)</option>
-                                <option>Squat (Jongkok Berdiri)</option>
+                            <select name="exercise_name" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <option value="Arm Curl (Tekuk Siku)">Arm Curl (Tekuk Siku)</option>
+                                <option value="Knee Extension (Ekstensi Lutut)">Knee Extension (Ekstensi Lutut)</option>
+                                <option value="Shoulder Abduction (Angkat Bahu)">Shoulder Abduction (Angkat Bahu)</option>
+                                <option value="Squat (Jongkok Berdiri)">Squat (Jongkok Berdiri)</option>
                             </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-blue-900 mb-1">Target Repetisi</label>
-                                <input type="number" value="15" min="1" class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="number" name="target_reps" value="15" min="1" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-blue-900 mb-1">Sesi / Minggu</label>
-                                <input type="number" value="3" min="1" max="7" class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <input type="number" name="sessions_per_week" value="3" min="1" max="7" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
                             </div>
                         </div>
                     </div>
@@ -849,70 +853,82 @@
     </main>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `px-6 py-4 rounded-xl shadow-2xl text-white font-bold text-sm transform transition-all duration-300 translate-x-full flex items-center gap-3 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
-            toast.innerHTML = `
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"></path></svg>
-                ${message}
-            `;
-            document.getElementById('toastContainer').appendChild(toast);
-            
-            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
-            setTimeout(() => {
-                toast.classList.add('translate-x-full');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+    // ==========================================
+    // 1. UTILITAS GLOBAL (Bisa dipanggil dari mana saja)
+    // ==========================================
+    window.showToast = function(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) return;
 
+        const toast = document.createElement('div');
+        toast.className = `px-6 py-4 rounded-xl shadow-2xl text-white font-bold text-sm transform transition-all duration-300 translate-x-full flex items-center gap-3 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+        toast.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"></path></svg>
+            ${message}
+        `;
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Notifikasi Server (Laravel) ---
         @if(session('success'))
             showToast("{{ session('success') }}", 'success');
         @endif
         @if($errors->any())
-            showToast("Gagal menyimpan data. Periksa kembali form.", 'error');
+            showToast("Error: {{ $errors->first() }}", 'error');
         @endif
 
-        const views = document.querySelectorAll('.view-section');
-        const navBtns = document.querySelectorAll('.nav-btn');
-        
-        const mobileSidebar = document.getElementById('mobileSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const openSidebarBtn = document.getElementById('openSidebarBtn');
-        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        // ==========================================
+        // 2. SISTEM NAVIGASI & SIDEBAR
+        // ==========================================
+        const navSystem = {
+            views: document.querySelectorAll('.view-section'),
+            navBtns: document.querySelectorAll('.nav-btn'),
+            sidebar: document.getElementById('mobileSidebar'),
+            overlay: document.getElementById('sidebarOverlay'),
+            
+            init() {
+                // Event Listener Sidebar Toggle
+                document.getElementById('openSidebarBtn')?.addEventListener('click', () => this.openSidebar());
+                document.getElementById('closeSidebarBtn')?.addEventListener('click', () => this.closeSidebar());
+                this.overlay?.addEventListener('click', () => this.closeSidebar());
 
-        function openSidebar() {
-            mobileSidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.remove('hidden');
-        }
-
-        function closeSidebar() {
-            mobileSidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('hidden');
-        }
-
-        if(openSidebarBtn) openSidebarBtn.addEventListener('click', openSidebar);
-        if(closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
-        if(sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-        
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+                // Event Listener Ganti Tab/Halaman
+                this.navBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => this.switchTab(btn));
+                });
+            },
+            openSidebar() {
+                this.sidebar?.classList.remove('-translate-x-full');
+                this.overlay?.classList.remove('hidden');
+            },
+            closeSidebar() {
+                this.sidebar?.classList.add('-translate-x-full');
+                this.overlay?.classList.add('hidden');
+            },
+            switchTab(btn) {
                 const targetId = btn.getAttribute('data-target');
                 if(!targetId) return;
+                if(window.innerWidth < 768) this.closeSidebar();
 
-                if(window.innerWidth < 768) {
-                    closeSidebar();
-                }
-
-                navBtns.forEach(b => {
+                // Reset semua tombol nav
+                this.navBtns.forEach(b => {
                     b.classList.remove('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
                     b.classList.add('text-gray-500', 'border-transparent');
                 });
                 
+                // Aktifkan tombol nav saat ini
                 btn.classList.add('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
                 btn.classList.remove('text-gray-500', 'border-transparent');
 
-                views.forEach(v => {
+                // Sembunyikan semua view, tampilkan yang ditarget
+                this.views.forEach(v => {
                     v.classList.add('hidden');
                     v.classList.remove('fade-in');
                 });
@@ -921,135 +937,116 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(targetView) {
                     targetView.classList.remove('hidden');
                     setTimeout(() => targetView.classList.add('fade-in'), 10);
-                    if(targetId === 'view-dashboard') updateCharts();
-                    if(targetId === 'view-teleconsultation') startCamera();
+                    
+                    // Trigger fungsi khusus berdasarkan halaman yang dibuka
+                    if(targetId === 'view-dashboard') chartSystem.update();
+                    if(targetId === 'view-teleconsultation') teleSystem.start();
                 }
-            });
-        });
-
-        const notifBtn = document.getElementById('notifBtn');
-        const notifDropdown = document.getElementById('notifDropdown');
-        if(notifBtn) {
-            notifBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notifDropdown.classList.toggle('hidden');
-                if(headerProfileDropdown) headerProfileDropdown.classList.add('hidden');
-            });
-        }
-
-        const headerProfileBtn = document.getElementById('headerProfileBtn');
-        const headerProfileDropdown = document.getElementById('headerProfileDropdown');
-        if(headerProfileBtn) {
-            headerProfileBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                headerProfileDropdown.classList.toggle('hidden');
-                if(notifDropdown) notifDropdown.classList.add('hidden');
-            });
-        }
-
-        document.addEventListener('click', () => {
-            if(notifDropdown) notifDropdown.classList.add('hidden');
-            if(headerProfileDropdown) headerProfileDropdown.classList.add('hidden');
-        });
-
-        let patients = {!! json_encode($patientsList->map(function($p) {
-            $type = 'lansia';
-            if (stripos($p->medical_diagnosis, 'stroke') !== false) $type = 'stroke';
-            if (stripos($p->medical_diagnosis, 'cedera') !== false || stripos($p->medical_diagnosis, 'acl') !== false) $type = 'cedera';
-            
-            return [
-                'id' => 'P-' . str_pad($p->id, 4, '0', STR_PAD_LEFT),
-                'name' => $p->user->name ?? 'Unknown',
-                'age' => \Carbon\Carbon::parse($p->date_of_birth)->age,
-                'gender' => $p->gender == 'male' ? 'L' : 'P',
-                'type' => $type,
-                'desc' => $p->medical_diagnosis,
-                'accuracy' => rand(70, 98),
-                'status' => rand(1, 10) > 2 ? 'optimal' : 'kurang',
-                'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($p->user->name ?? 'User') . '&background=2563eb&color=fff'
-            ];
-        })) !!};
-
-        const typeMap = {
-            'stroke': 'Post-Stroke / Saraf',
-            'cedera': 'Cedera Otot / Sendi',
-            'lansia': 'Geriatri / Lansia'
+            }
         };
 
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let filteredPatients = [...patients];
+        // Menu Dropdown Header (Notif & Profil)
+        const headerSystem = {
+            init() {
+                const notifBtn = document.getElementById('notifBtn');
+                const notifDropdown = document.getElementById('notifDropdown');
+                const profileBtn = document.getElementById('headerProfileBtn');
+                const profileDropdown = document.getElementById('headerProfileDropdown');
 
-        const tbody = document.getElementById('patientTableBody');
-        const emptyState = document.getElementById('emptyState');
-        const pageInfo = document.getElementById('paginationInfo');
-        const btnPrev = document.getElementById('btnPrevPage');
-        const btnNext = document.getElementById('btnNextPage');
-        const navCount = document.getElementById('navPatientCount');
-        const progSelect = document.getElementById('progPatient');
+                notifBtn?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notifDropdown.classList.toggle('hidden');
+                    profileDropdown?.classList.add('hidden');
+                });
 
-        function getStatusBadge(status) {
-            if(status === 'optimal') return '<span class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-green-100 text-green-700 border border-green-200">Optimal</span>';
-            if(status === 'kurang') return '<span class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-yellow-100 text-yellow-800 border border-yellow-200">Di Bawah Target</span>';
-            return '<span class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-red-100 text-red-700 border border-red-200">Kritis / Intervensi</span>';
-        }
+                profileBtn?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                    notifDropdown?.classList.add('hidden');
+                });
 
-        function getAccuracyBar(accuracy, status) {
-            let color = 'bg-green-500';
-            if(status === 'kurang') color = 'bg-yellow-400';
-            if(status === 'kritis') color = 'bg-red-500';
-            if(accuracy === 0) color = 'bg-gray-300';
-            
-            return `
-                <div class="flex items-center gap-2">
-                    <div class="w-16 bg-blue-100 rounded-full h-2.5">
-                        <div class="${color} h-2.5 rounded-full" style="width: ${accuracy}%"></div>
-                    </div>
-                    <span class="font-bold ${accuracy === 0 ? 'text-gray-400' : 'text-gray-700'} text-xs">${accuracy}%</span>
-                </div>
-            `;
-        }
-
-        function renderTable() {
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            if(navCount) navCount.innerText = patients.length;
-            
-            if(progSelect) {
-                progSelect.innerHTML = '';
-                patients.forEach(p => {
-                    progSelect.innerHTML += `<option value="${p.id}">${p.id} - ${p.name}</option>`;
+                document.addEventListener('click', () => {
+                    notifDropdown?.classList.add('hidden');
+                    profileDropdown?.classList.add('hidden');
                 });
             }
+        };
 
-            if(document.getElementById('statTotalPatient')) document.getElementById('statTotalPatient').innerText = patients.length;
-            if(document.getElementById('statCritical')) document.getElementById('statCritical').innerText = patients.filter(p => p.status === 'kritis').length;
+        // ==========================================
+        // 3. DATA PASIEN & TABEL (Filter, Paginasi)
+        // ==========================================
+        const patientData = {
+            raw: {!! json_encode($patientsList->map(function($p) {
+                $type = 'lansia';
+                if (stripos($p->medical_diagnosis, 'stroke') !== false) $type = 'stroke';
+                if (stripos($p->medical_diagnosis, 'cedera') !== false || stripos($p->medical_diagnosis, 'acl') !== false) $type = 'cedera';
+                return [
+                    'id' => 'P-' . str_pad($p->id, 4, '0', STR_PAD_LEFT),
+                    'name' => $p->user->name ?? 'Unknown',
+                    'age' => \Carbon\Carbon::parse($p->date_of_birth)->age,
+                    'gender' => $p->gender == 'male' ? 'L' : 'P',
+                    'type' => $type,
+                    'desc' => $p->medical_diagnosis,
+                    'accuracy' => rand(70, 98),
+                    'status' => rand(1, 10) > 2 ? 'optimal' : 'kurang',
+                    'avatar' => 'https://ui-avatars.com/api/?name=' . urlencode($p->user->name ?? 'User') . '&background=2563eb&color=fff'
+                ];
+            })) !!},
+            filtered: [],
+            currentPage: 1,
+            itemsPerPage: 5,
 
-            if (filteredPatients.length === 0) {
-                tbody.parentElement.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
-                pageInfo.innerText = 'Menampilkan 0 data';
-                btnPrev.disabled = true;
-                btnNext.disabled = true;
-                return;
-            }
+            init() {
+                this.filtered = [...this.raw];
+                this.render();
+                this.attachFilterEvents();
+            },
+            render() {
+                const tbody = document.getElementById('patientTableBody');
+                if(!tbody) return;
 
-            tbody.parentElement.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
+                // Update info ringkasan
+                document.getElementById('navPatientCount').innerText = this.raw.length;
+                document.getElementById('statTotalPatient').innerText = this.raw.length;
+                document.getElementById('statCritical').innerText = this.raw.filter(p => p.status === 'kritis').length;
 
-            const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
-            if (currentPage > totalPages) currentPage = totalPages;
-            if (currentPage < 1) currentPage = 1;
+                // Handle Empty State
+                const emptyState = document.getElementById('emptyState');
+                if (this.filtered.length === 0) {
+                    tbody.parentElement.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    document.getElementById('paginationInfo').innerText = 'Menampilkan 0 data';
+                    return;
+                }
 
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-            const paginatedData = filteredPatients.slice(start, end);
+                // Handle Paginasi
+                tbody.parentElement.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
 
-            paginatedData.forEach(p => {
+                const totalPages = Math.ceil(this.filtered.length / this.itemsPerPage);
+                if (this.currentPage > totalPages) this.currentPage = totalPages;
+                if (this.currentPage < 1) this.currentPage = 1;
+
+                const start = (this.currentPage - 1) * this.itemsPerPage;
+                const paginatedData = this.filtered.slice(start, start + this.itemsPerPage);
+
+                tbody.innerHTML = '';
+                paginatedData.forEach(p => tbody.appendChild(this.createRow(p)));
+
+                // Update UI Paginasi
+                document.getElementById('paginationInfo').innerText = `Menampilkan ${start + 1} - ${Math.min(start + this.itemsPerPage, this.filtered.length)} dari ${this.filtered.length} pasien`;
+                document.getElementById('btnPrevPage').disabled = this.currentPage === 1;
+                document.getElementById('btnNextPage').disabled = this.currentPage === totalPages;
+            },
+            createRow(p) {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-blue-50/40 transition-colors group cursor-pointer';
+                const typeLabel = p.type === 'stroke' ? 'Post-Stroke' : (p.type === 'cedera' ? 'Cedera' : 'Lansia');
+                const badgeColor = p.status === 'optimal' ? 'green' : (p.status === 'kurang' ? 'yellow' : 'red');
+                const badgeText = p.status === 'optimal' ? 'Optimal' : (p.status === 'kurang' ? 'Di Bawah Target' : 'Kritis');
+
                 tr.innerHTML = `
                     <td class="px-6 py-4 font-bold text-blue-600">${p.id}</td>
                     <td class="px-6 py-4">
@@ -1061,425 +1058,311 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     </td>
+                    <td class="px-6 py-4"><span class="font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded border border-gray-100 text-xs">${typeLabel}</span></td>
                     <td class="px-6 py-4">
-                        <span class="font-bold text-gray-700 bg-gray-50 px-2 py-1 rounded border border-gray-100 text-xs">${typeMap[p.type]}</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-16 bg-blue-100 rounded-full h-2.5"><div class="bg-${badgeColor}-500 h-2.5 rounded-full" style="width: ${p.accuracy}%"></div></div>
+                            <span class="font-bold text-gray-700 text-xs">${p.accuracy}%</span>
+                        </div>
                     </td>
-                    <td class="px-6 py-4">${getAccuracyBar(p.accuracy, p.status)}</td>
-                    <td class="px-6 py-4 text-center">${getStatusBadge(p.status)}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-${badgeColor}-100 text-${badgeColor}-700 border border-${badgeColor}-200">${badgeText}</span>
+                    </td>
                     <td class="px-6 py-4 text-right">
-                        <button class="action-btn text-blue-400 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-100">
-                            <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        </button>
+                        <button class="text-blue-400 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-100">Detail</button>
                     </td>
                 `;
-                
-                tr.addEventListener('click', () => {
-                    openPatientDetail(p);
-                });
-                
-                tbody.appendChild(tr);
-            });
+                tr.addEventListener('click', () => modalSystem.openPatientDetail(p));
+                return tr;
+            },
+            attachFilterEvents() {
+                const doFilter = () => {
+                    const search = (document.getElementById('tableSearch')?.value || document.getElementById('globalSearch')?.value || '').toLowerCase();
+                    const type = document.getElementById('filterDiagnosis')?.value || 'all';
+                    const status = document.getElementById('filterStatus')?.value || 'all';
 
-            pageInfo.innerText = `Menampilkan ${start + 1} - ${Math.min(end, filteredPatients.length)} dari ${filteredPatients.length} pasien`;
-            btnPrev.disabled = currentPage === 1;
-            btnNext.disabled = currentPage === totalPages;
-        }
-
-        function filterData() {
-            const query = document.getElementById('tableSearch') ? document.getElementById('tableSearch').value.toLowerCase() : '';
-            const type = document.getElementById('filterDiagnosis') ? document.getElementById('filterDiagnosis').value : 'all';
-            const status = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'all';
-            const globalQuery = document.getElementById('globalSearch') ? document.getElementById('globalSearch').value.toLowerCase() : '';
-
-            const activeQuery = globalQuery || query;
-
-            filteredPatients = patients.filter(p => {
-                const matchName = p.name.toLowerCase().includes(activeQuery) || p.id.toLowerCase().includes(activeQuery);
-                const matchType = type === 'all' || p.type === type;
-                const matchStatus = status === 'all' || p.status === status;
-                return matchName && matchType && matchStatus;
-            });
-
-            currentPage = 1;
-            renderTable();
-        }
-
-        if(document.getElementById('tableSearch')) document.getElementById('tableSearch').addEventListener('input', filterData);
-        if(document.getElementById('globalSearch')) {
-            document.getElementById('globalSearch').addEventListener('input', () => {
-                const btn = document.querySelector('[data-target="view-patients"]');
-                if(btn) btn.click();
-                filterData();
-            });
-        }
-        if(document.getElementById('filterDiagnosis')) document.getElementById('filterDiagnosis').addEventListener('change', filterData);
-        if(document.getElementById('filterStatus')) document.getElementById('filterStatus').addEventListener('change', filterData);
-
-        if(btnPrev) {
-            btnPrev.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            });
-        }
-
-        if(btnNext) {
-            btnNext.addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            });
-        }
-
-        const modalAddPatient = document.getElementById('modalAddPatient');
-        
-        if(document.getElementById('btnAddPatient')) {
-            document.getElementById('btnAddPatient').addEventListener('click', () => {
-                modalAddPatient.classList.remove('hidden');
-            });
-        }
-        
-        const closePatientModal = () => { if(modalAddPatient) modalAddPatient.classList.add('hidden'); };
-        if(document.getElementById('closeModalAddPatient')) document.getElementById('closeModalAddPatient').addEventListener('click', closePatientModal);
-        if(document.getElementById('cancelModalAddPatient')) document.getElementById('cancelModalAddPatient').addEventListener('click', closePatientModal);
-        if(document.getElementById('overlayAddPatient')) document.getElementById('overlayAddPatient').addEventListener('click', closePatientModal);
-
-        const formAddPatient = document.getElementById('formAddPatient');
-        if(formAddPatient) {
-            formAddPatient.addEventListener('submit', (e) => {
-                const btn = formAddPatient.querySelector('button[type="submit"]');
-                btn.innerHTML = 'Menyimpan...';
-                btn.classList.add('opacity-70', 'cursor-not-allowed');
-            });
-        }
-
-        const modalAddProgram = document.getElementById('modalAddProgram');
-        const formAddProgram = document.getElementById('formAddProgram');
-        
-        if(document.getElementById('btnNewProgram')) {
-            document.getElementById('btnNewProgram').addEventListener('click', () => {
-                modalAddProgram.classList.remove('hidden');
-            });
-        }
-        
-        const closeProgramModal = () => { if(modalAddProgram) modalAddProgram.classList.add('hidden'); };
-        if(document.getElementById('closeModalAddProgram')) document.getElementById('closeModalAddProgram').addEventListener('click', closeProgramModal);
-        if(document.getElementById('cancelModalAddProgram')) document.getElementById('cancelModalAddProgram').addEventListener('click', closeProgramModal);
-        if(document.getElementById('overlayAddProgram')) document.getElementById('overlayAddProgram').addEventListener('click', closeProgramModal);
-
-        if(formAddProgram) {
-            formAddProgram.addEventListener('submit', (e) => {
-                e.preventDefault();
-                closeProgramModal();
-                showToast(`Program Latihan berhasil di-generate!`);
-            });
-        }
-
-        const slideOver = document.getElementById('slideOverDetail');
-        const slidePanel = document.getElementById('slidePanel');
-        const closeSlide = document.getElementById('closeSlideOver');
-        const overlayDetail = document.getElementById('overlayDetail');
-
-        function openPatientDetail(patient) {
-            document.getElementById('detAvatar').src = patient.avatar;
-            document.getElementById('detName').innerText = patient.name;
-            document.getElementById('detId').innerText = `ID: ${patient.id}`;
-            document.getElementById('detAge').innerText = `${patient.age} Tahun`;
-            document.getElementById('detGender').innerText = patient.gender === 'L' ? 'Laki-laki' : 'Perempuan';
-            document.getElementById('detDiagnosis').innerText = patient.desc;
-            document.getElementById('detAccuracyTxt').innerText = `${patient.accuracy}%`;
-            
-            let color = 'bg-green-500';
-            if(patient.status === 'kurang') color = 'bg-yellow-400';
-            if(patient.status === 'kritis') color = 'bg-red-500';
-            if(patient.accuracy === 0) color = 'bg-gray-300';
-            
-            const bar = document.getElementById('detAccuracyBar');
-            bar.className = `${color} h-2 rounded-full transition-all duration-1000`;
-            bar.style.width = '0%';
-            
-            document.getElementById('detStatusBadge').outerHTML = `<span id="detStatusBadge" class="mt-3 inline-flex items-center ${patient.status === 'optimal' ? 'bg-green-100 text-green-700 border-green-200' : (patient.status === 'kurang' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' : 'bg-red-100 text-red-700 border-red-200')} px-4 py-1.5 rounded-full text-xs font-extrabold border">${patient.status.toUpperCase()}</span>`;
-
-            slidePanel.classList.remove('slide-out');
-            slidePanel.classList.add('slide-in');
-            slideOver.classList.remove('hidden');
-            
-            setTimeout(() => {
-                bar.style.width = `${patient.accuracy}%`;
-            }, 300);
-        }
-
-        const closeSlideFunc = () => {
-            if(!slidePanel) return;
-            slidePanel.classList.remove('slide-in');
-            slidePanel.classList.add('slide-out');
-            setTimeout(() => {
-                slideOver.classList.add('hidden');
-            }, 300);
-        };
-
-        if(closeSlide) closeSlide.addEventListener('click', closeSlideFunc);
-        if(overlayDetail) overlayDetail.addEventListener('click', closeSlideFunc);
-
-        let actChart, diagChart;
-
-        function initCharts() {
-            const ctxActivity = document.getElementById('activityChart');
-            if(!ctxActivity) return;
-            
-            actChart = new Chart(ctxActivity.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-                    datasets: [{
-                        label: 'Sesi Selesai',
-                        data: [120, 150, 180, 140, 210, 170, 250],
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#2563eb',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#e2e8f0' }, border: { display: false } },
-                        x: { grid: { display: false }, border: { display: false } }
-                    }
-                }
-            });
-
-            const ctxDiagnosis = document.getElementById('diagnosisChart');
-            if(!ctxDiagnosis) return;
-
-            diagChart = new Chart(ctxDiagnosis.getContext('2d'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Post-Stroke', 'Cedera Olahraga', 'Lansia / Sendi'],
-                    datasets: [{
-                        data: [0, 0, 0], 
-                        backgroundColor: ['#2563eb', '#0ea5e9', '#38bdf8'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: true } }
-                }
-            });
-        }
-
-        function updateCharts() {
-            if(!diagChart) return;
-            
-            let strokeCount = patients.filter(p => p.type === 'stroke').length;
-            let cederaCount = patients.filter(p => p.type === 'cedera').length;
-            let lansiaCount = patients.filter(p => p.type === 'lansia').length;
-            
-            diagChart.data.datasets[0].data = [strokeCount, cederaCount, lansiaCount];
-            diagChart.update();
-        }
-
-        const btnExport = document.getElementById('btnExport');
-        if(btnExport) {
-            btnExport.addEventListener('click', function() {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2 text-blue-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2z"></path></svg> Memproses...';
-                this.classList.add('opacity-75', 'cursor-not-allowed');
-                
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.classList.remove('opacity-75', 'cursor-not-allowed');
-                    showToast('Laporan PDF berhasil diunduh!');
-                }, 2000);
-            });
-        }
-
-        initCharts();
-        renderTable();
-        updateCharts();
-
-const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatArea = document.getElementById('chatArea');
-        const myId = {{ Auth::id() ?? 1 }};
-        let patientId = 2;
-
-        window.changeChat = function(id, name, avatar, el) {
-            patientId = id;
-            document.getElementById('chatHeaderName').innerText = name;
-            document.getElementById('chatHeaderImg').src = avatar;
-
-            document.querySelectorAll('.chat-contact').forEach(item => {
-                item.classList.remove('bg-blue-50', 'border-blue-600');
-                item.classList.add('border-transparent');
-            });
-
-            el.classList.add('bg-blue-50', 'border-blue-600');
-            el.classList.remove('border-transparent');
-
-            loadDoctorChat();
-        };
-
-        function loadDoctorChat() {
-            if(!chatArea) return;
-            fetch(`/chat/fetch/${patientId}`)
-                .then(r => r.json())
-                .then(data => {
-                    chatArea.innerHTML = '';
-                    data.forEach(msg => {
-                        const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        if(msg.sender_id === myId) {
-                            chatArea.innerHTML += `
-                                <div class="flex justify-end mt-4">
-                                    <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-sm">
-                                        <p class="text-sm">${msg.message}</p>
-                                        <p class="text-[10px] text-blue-200 mt-1 text-right">${time}</p>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            chatArea.innerHTML += `
-                                <div class="flex justify-start mt-4">
-                                    <div class="bg-white border border-blue-100 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-sm">
-                                        <p class="text-sm text-gray-700">${msg.message}</p>
-                                        <p class="text-[10px] text-gray-400 mt-1 text-right">${time}</p>
-                                    </div>
-                                </div>
-                            `;
-                        }
+                    this.filtered = this.raw.filter(p => {
+                        return (p.name.toLowerCase().includes(search) || p.id.toLowerCase().includes(search)) &&
+                               (type === 'all' || p.type === type) &&
+                               (status === 'all' || p.status === status);
                     });
-                    chatArea.scrollTop = chatArea.scrollHeight;
-                });
-        }
+                    this.currentPage = 1;
+                    this.render();
+                };
 
-        if(chatForm) {
-            setInterval(loadDoctorChat, 2000);
-            loadDoctorChat();
-
-            chatForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const msgText = chatInput.value.trim();
-                if(msgText === '') return;
-
-               fetch('/chat/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        receiver_id: patientId,
-                        message: msgText
-                    })
-                })
-                .then(response => {
-                    if(!response.ok) throw new Error('Gagal menyimpan ke database');
-                    chatInput.value = '';
-                    loadDoctorChat();
-                })
-                .catch(err => console.error('Error:', err));
-            });
-        }
-        let localStream = null;
-        const mainVideo = document.getElementById('mainVideo');
-        const btnToggleMic = document.getElementById('btnToggleMic');
-        const btnToggleCam = document.getElementById('btnToggleCam');
-        const btnEndCall = document.getElementById('btnEndCall');
-        let isMicOn = true;
-        let isCamOn = true;
-
-        function startCamera() {
-            if(localStream) return;
-            
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(stream => {
-                localStream = stream;
-                if(mainVideo) {
-                    mainVideo.srcObject = stream;
-                }
-                showToast('Terhubung ke sesi telekonsultasi');
-            })
-            .catch(err => {
-                showToast('Gagal mengakses kamera/mikrofon', 'error');
-            });
-        }
-
-        function stopCamera() {
-            if(localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
+                ['tableSearch', 'globalSearch'].forEach(id => document.getElementById(id)?.addEventListener('input', doFilter));
+                ['filterDiagnosis', 'filterStatus'].forEach(id => document.getElementById(id)?.addEventListener('change', doFilter));
+                
+                document.getElementById('btnPrevPage')?.addEventListener('click', () => { if(this.currentPage > 1) { this.currentPage--; this.render(); } });
+                document.getElementById('btnNextPage')?.addEventListener('click', () => { this.currentPage++; this.render(); });
             }
-            if(mainVideo) mainVideo.srcObject = null;
-        }
+        };
 
-        if(btnToggleMic) {
-            btnToggleMic.addEventListener('click', () => {
-                if(localStream) {
-                    const audioTrack = localStream.getAudioTracks()[0];
-                    if(audioTrack) {
-                        isMicOn = !isMicOn;
-                        audioTrack.enabled = isMicOn;
-                        if(isMicOn) {
-                            btnToggleMic.classList.remove('bg-red-600', 'text-white');
-                            btnToggleMic.classList.add('bg-gray-700/80', 'text-white');
-                            showToast('Mikrofon aktif');
-                        } else {
-                            btnToggleMic.classList.remove('bg-gray-700/80', 'text-white');
-                            btnToggleMic.classList.add('bg-red-600', 'text-white');
-                            showToast('Mikrofon dibisukan', 'error');
-                        }
+        // ==========================================
+        // 4. CHART JS (Grafik)
+        // ==========================================
+        const chartSystem = {
+            actChart: null,
+            diagChart: null,
+            init() {
+                const ctxActivity = document.getElementById('activityChart');
+                if(ctxActivity) {
+                    this.actChart = new Chart(ctxActivity.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                            datasets: [{ label: 'Sesi Selesai', data: [120, 150, 180, 140, 210, 170, 250], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', borderWidth: 3, tension: 0.4, fill: true }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                }
+
+                const ctxDiagnosis = document.getElementById('diagnosisChart');
+                if(ctxDiagnosis) {
+                    this.diagChart = new Chart(ctxDiagnosis.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Post-Stroke', 'Cedera Olahraga', 'Lansia / Sendi'],
+                            datasets: [{ data: [0, 0, 0], backgroundColor: ['#2563eb', '#0ea5e9', '#38bdf8'], borderWidth: 0 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
+                    });
+                }
+                this.update();
+            },
+            update() {
+                if(!this.diagChart) return;
+                const s = patientData.raw.filter(p => p.type === 'stroke').length;
+                const c = patientData.raw.filter(p => p.type === 'cedera').length;
+                const l = patientData.raw.filter(p => p.type === 'lansia').length;
+                this.diagChart.data.datasets[0].data = [s, c, l];
+                this.diagChart.update();
+            }
+        };
+
+        // ==========================================
+        // 5. MANAJEMEN MODAL (Popup)
+        // ==========================================
+        const modalSystem = {
+            init() {
+                this.setupModal('modalAddPatient', 'btnAddPatient', 'closeModalAddPatient', 'cancelModalAddPatient', 'overlayAddPatient');
+                this.setupModal('modalAddProgram', 'btnNewProgram', 'closeModalAddProgram', 'cancelModalAddProgram', 'overlayAddProgram');
+                
+                // Form Submit Loading State
+                document.getElementById('formAddPatient')?.addEventListener('submit', function() {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.innerHTML = 'Menyimpan...'; btn.classList.add('opacity-70', 'cursor-not-allowed');
+                });
+                document.getElementById('formAddProgram')?.addEventListener('submit', function() {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.innerHTML = 'Memproses...'; btn.classList.add('opacity-70', 'cursor-not-allowed');
+                });
+
+                // Event listener khusus untuk menutup modal detail pasien (Slide Over)
+                document.getElementById('closeSlideOver')?.addEventListener('click', () => this.closePatientDetail());
+                document.getElementById('overlayDetail')?.addEventListener('click', () => this.closePatientDetail());
+            },
+            setupModal(modalId, btnOpenId, btnCloseId, btnCancelId, overlayId) {
+                const modal = document.getElementById(modalId);
+                const closeAction = () => modal?.classList.add('hidden');
+                
+                document.getElementById(btnOpenId)?.addEventListener('click', () => modal?.classList.remove('hidden'));
+                document.getElementById(btnCloseId)?.addEventListener('click', closeAction);
+                document.getElementById(btnCancelId)?.addEventListener('click', closeAction);
+                document.getElementById(overlayId)?.addEventListener('click', closeAction);
+            },
+            openPatientDetail(p) {
+                document.getElementById('detAvatar').src = p.avatar;
+                document.getElementById('detName').innerText = p.name;
+                document.getElementById('detId').innerText = `ID: ${p.id}`;
+                document.getElementById('detAge').innerText = `${p.age} Tahun`;
+                document.getElementById('detGender').innerText = p.gender === 'L' ? 'Laki-laki' : 'Perempuan';
+                document.getElementById('detDiagnosis').innerText = p.desc;
+                document.getElementById('detAccuracyTxt').innerText = `${p.accuracy}%`;
+
+                const bar = document.getElementById('detAccuracyBar');
+                bar.className = `bg-${p.status === 'optimal' ? 'green' : (p.status === 'kurang' ? 'yellow' : 'red')}-500 h-2 rounded-full transition-all duration-1000`;
+                bar.style.width = '0%';
+                setTimeout(() => { bar.style.width = `${p.accuracy}%`; }, 300);
+
+                const slidePanel = document.getElementById('slidePanel');
+                slidePanel.classList.remove('slide-out');
+                slidePanel.classList.add('slide-in');
+                document.getElementById('slideOverDetail').classList.remove('hidden');
+            },
+            closePatientDetail() {
+                const slidePanel = document.getElementById('slidePanel');
+                slidePanel.classList.remove('slide-in');
+                slidePanel.classList.add('slide-out');
+                setTimeout(() => document.getElementById('slideOverDetail').classList.add('hidden'), 300);
+            }
+        };
+
+        // ==========================================
+        // 6. SISTEM CHAT DOKTER <-> PASIEN
+        // ==========================================
+        const chatSystem = {
+            form: document.getElementById('chatForm'),
+            input: document.getElementById('chatInput'),
+            area: document.getElementById('chatArea'),
+            myId: {{ Auth::id() ?? 1 }},
+            patientId: 2, 
+            intervalId: null,
+
+            init() {
+                if(!this.form) return;
+                
+                // Fungsi untuk mengganti target pasien chat (Dipanggil dari HTML onclick)
+                window.changeChat = (id, name, avatar, el) => {
+                    this.patientId = id; 
+                    document.getElementById('chatHeaderName').innerText = name;
+                    document.getElementById('chatHeaderImg').src = avatar;
+
+                    document.querySelectorAll('.chat-contact').forEach(item => {
+                        item.classList.remove('bg-blue-50', 'border-blue-600');
+                        item.classList.add('border-transparent');
+                    });
+                    el.classList.add('bg-blue-50', 'border-blue-600');
+                    el.classList.remove('border-transparent');
+                    this.loadMessages();
+                };
+
+                // Jalankan polling
+                if(this.intervalId) clearInterval(this.intervalId);
+                this.intervalId = setInterval(() => this.loadMessages(), 2000);
+                this.loadMessages();
+
+                // Form Submit Kirim Pesan
+                this.form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const msgText = this.input.value.trim();
+                    if(msgText === '') return;
+
+                    fetch('/chat/send', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ receiver_id: this.patientId, message: msgText })
+                    })
+                    .then(response => {
+                        if(!response.ok) throw new Error('Gagal ke database');
+                        this.input.value = '';
+                        this.loadMessages();
+                    })
+                    .catch(err => showToast('Gagal mengirim pesan', 'error'));
+                });
+            },
+            loadMessages() {
+                if(!this.area) return;
+                fetch(`/chat/fetch/${this.patientId}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        this.area.innerHTML = '';
+                        data.forEach(msg => {
+                            const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            if(msg.sender_id === this.myId) {
+                                this.area.innerHTML += `
+                                    <div class="flex justify-end mt-4">
+                                        <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-sm">
+                                            <p class="text-sm">${msg.message}</p>
+                                            <p class="text-[10px] text-blue-200 mt-1 text-right">${time}</p>
+                                        </div>
+                                    </div>`;
+                            } else {
+                                this.area.innerHTML += `
+                                    <div class="flex justify-start mt-4">
+                                        <div class="bg-white border border-blue-100 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-sm">
+                                            <p class="text-sm text-gray-700">${msg.message}</p>
+                                            <p class="text-[10px] text-gray-400 mt-1 text-right">${time}</p>
+                                        </div>
+                                    </div>`;
+                            }
+                        });
+                        this.area.scrollTop = this.area.scrollHeight;
+                    }).catch(e => console.log('Chat fetch issue', e));
+            }
+        };
+
+        // ==========================================
+        // 7. TELEKONSULTASI (WebRTC / Kamera)
+        // ==========================================
+        const teleSystem = {
+            stream: null,
+            video: document.getElementById('mainVideo'),
+            isMicOn: true,
+            isCamOn: true,
+            
+            init() {
+                document.getElementById('btnToggleMic')?.addEventListener('click', (e) => this.toggleMedia('audio', e.currentTarget));
+                document.getElementById('btnToggleCam')?.addEventListener('click', (e) => this.toggleMedia('video', e.currentTarget));
+                document.getElementById('btnEndCall')?.addEventListener('click', () => {
+                    this.stop();
+                    showToast('Panggilan diakhiri', 'error');
+                    setTimeout(() => document.querySelector('[data-target="view-dashboard"]')?.click(), 1000);
+                });
+            },
+            start() {
+                if(this.stream) return;
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(stream => {
+                    this.stream = stream;
+                    if(this.video) this.video.srcObject = stream;
+                    showToast('Terhubung ke sesi telekonsultasi');
+                })
+                .catch(err => showToast('Gagal mengakses kamera/mikrofon', 'error'));
+            },
+            stop() {
+                if(this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.stream = null;
+                }
+                if(this.video) this.video.srcObject = null;
+            },
+            toggleMedia(type, btnElement) {
+                if(!this.stream) return;
+                const track = type === 'audio' ? this.stream.getAudioTracks()[0] : this.stream.getVideoTracks()[0];
+                if(track) {
+                    const isActive = type === 'audio' ? (this.isMicOn = !this.isMicOn) : (this.isCamOn = !this.isCamOn);
+                    track.enabled = isActive;
+                    if(isActive) {
+                        btnElement.classList.remove('bg-red-600', 'text-white');
+                        btnElement.classList.add('bg-gray-700/80', 'text-white');
+                        showToast(`${type === 'audio' ? 'Mikrofon' : 'Kamera'} aktif`);
+                    } else {
+                        btnElement.classList.remove('bg-gray-700/80', 'text-white');
+                        btnElement.classList.add('bg-red-600', 'text-white');
+                        showToast(`${type === 'audio' ? 'Mikrofon' : 'Kamera'} dimatikan`, 'error');
                     }
                 }
-            });
-        }
+            }
+        };
 
-        if(btnToggleCam) {
-            btnToggleCam.addEventListener('click', () => {
-                if(localStream) {
-                    const videoTrack = localStream.getVideoTracks()[0];
-                    if(videoTrack) {
-                        isCamOn = !isCamOn;
-                        videoTrack.enabled = isCamOn;
-                        if(isCamOn) {
-                            btnToggleCam.classList.remove('bg-red-600', 'text-white');
-                            btnToggleCam.classList.add('bg-gray-700/80', 'text-white');
-                            showToast('Kamera aktif');
-                        } else {
-                            btnToggleCam.classList.remove('bg-gray-700/80', 'text-white');
-                            btnToggleCam.classList.add('bg-red-600', 'text-white');
-                            showToast('Kamera dimatikan', 'error');
-                        }
-                    }
-                }
-            });
-        }
+        // --- EXPORT PDF BUTTON ---
+        document.getElementById('btnExport')?.addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2 text-blue-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2z"></path></svg> Memproses...';
+            this.classList.add('opacity-75', 'cursor-not-allowed');
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.classList.remove('opacity-75', 'cursor-not-allowed');
+                showToast('Laporan PDF berhasil diunduh!');
+            }, 2000);
+        });
 
-        if(btnEndCall) {
-            btnEndCall.addEventListener('click', () => {
-                stopCamera();
-                showToast('Panggilan diakhiri', 'error');
-                setTimeout(() => {
-                    const dbBtn = document.querySelector('[data-target="view-dashboard"]');
-                    if(dbBtn) dbBtn.click();
-                }, 1000);
-            });
-        }
-    });
+        // ==========================================
+        // INITIALIZATION SEMUA SISTEM DI ATAS
+        // ==========================================
+        navSystem.init();
+        headerSystem.init();
+        patientData.init();
+        chartSystem.init();
+        modalSystem.init();
+        chatSystem.init();
+        teleSystem.init();
+
+    }); // Akhir DOMContentLoaded
 </script>
 </body>
 </html>

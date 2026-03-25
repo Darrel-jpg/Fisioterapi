@@ -9,12 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class LatihanController extends Controller
 {
-    public function index()
+public function index($assignmentId)
     {
-        $assignment_id = 1; 
-        return view('latihan', compact('assignment_id'));
-    }
+        // Validasi apakah assignment ini benar milik pasien yang sedang login
+        $assignment = \App\Models\Assignment::where('id', $assignmentId)
+                        ->where('patient_id', \Illuminate\Support\Facades\Auth::id())
+                        ->firstOrFail();
 
+        return view('latihan', compact('assignmentId', 'assignment'));
+    }
     public function saveSession(Request $request)
     {
         $request->validate([
