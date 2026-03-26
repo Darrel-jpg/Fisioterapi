@@ -79,10 +79,6 @@
                         Pesan Pasien
                         <span class="absolute top-3 right-4 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                     </button>
-                    <button data-target="view-teleconsultation" class="nav-btn w-full flex items-center px-4 py-3 text-gray-500 hover:bg-blue-50 hover:text-blue-700 rounded-xl font-semibold transition-colors border border-transparent">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        Telekonsultasi
-                    </button>
                 </nav>
 
                 <p class="px-4 text-xs font-bold text-blue-400 uppercase tracking-wider mt-10 mb-4">Pengaturan</p>
@@ -377,7 +373,7 @@
                         <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">Modul Program Latihan</h1>
                         <p class="text-blue-500 font-medium mt-1">Kelola konfigurasi gerakan AI MediaPipe.</p>
                     </div>
-                    <button class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 flex items-center transition-colors text-sm" onclick="showToast('Fitur tambah modul sedang dikembangkan')">
+                    <button id="btnNewModule" class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 flex items-center transition-colors text-sm">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         Modul Baru
                     </button>
@@ -446,73 +442,73 @@
                 </div>
             </div>
 
-<div id="view-schedule" class="view-section hidden fade-in">
-    <div class="mb-8">
-        <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">Jadwal & Laporan</h1>
-        <p class="text-blue-500 font-medium mt-1">Manajemen waktu konsultasi dan pemantauan laporan harian.</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-3xl shadow-sm border border-blue-100 p-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="font-extrabold text-xl text-blue-900">Jadwal Sesi Hari Ini</h3>
-                    <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">3 Agenda</span>
+            <div id="view-schedule" class="view-section hidden fade-in">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">Jadwal & Laporan</h1>
+                    <p class="text-blue-500 font-medium mt-1">Manajemen waktu konsultasi dan pemantauan laporan harian.</p>
                 </div>
-                
-                <div class="space-y-4">
-                    <div class="group flex items-center p-5 rounded-2xl bg-blue-50/50 border border-transparent hover:border-blue-200 hover:bg-white transition-all cursor-pointer">
-                        <div class="w-20 font-black text-blue-600 text-lg">09:00</div>
-                        <div class="flex-1 border-l-2 border-blue-200 pl-6">
-                            <p class="font-bold text-blue-900 text-lg">Bapak Slamet</p>
-                            <p class="text-sm text-blue-500 font-medium">Evaluasi Post-Stroke (Video Call)</p>
-                        </div>
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20">Mulai Sesi</button>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <div class="lg:col-span-2">
+                        <div class="bg-white rounded-3xl shadow-sm border border-blue-100 p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="font-extrabold text-xl text-blue-900">Jadwal Sesi Hari Ini</h3>
+                                <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">3 Agenda</span>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="group flex items-center p-5 rounded-2xl bg-blue-50/50 border border-transparent hover:border-blue-200 hover:bg-white transition-all cursor-pointer">
+                                    <div class="w-20 font-black text-blue-600 text-lg">09:00</div>
+                                    <div class="flex-1 border-l-2 border-blue-200 pl-6">
+                                        <p class="font-bold text-blue-900 text-lg">Bapak Slamet</p>
+                                        <p class="text-sm text-blue-500 font-medium">Evaluasi Post-Stroke (Video Call)</p>
+                                    </div>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20">Mulai Sesi</button>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center p-5 rounded-2xl bg-gray-50 opacity-60">
+                                    <div class="w-20 font-black text-gray-400 text-lg">11:30</div>
+                                    <div class="flex-1 border-l-2 border-gray-200 pl-6">
+                                        <p class="font-bold text-gray-400 text-lg">Siti Aminah</p>
+                                        <p class="text-sm text-gray-400 font-medium">Selesai - Target Tercapai</p>
+                                    </div>
+                                    <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center p-5 rounded-2xl bg-gray-50 opacity-60">
-                        <div class="w-20 font-black text-gray-400 text-lg">11:30</div>
-                        <div class="flex-1 border-l-2 border-gray-200 pl-6">
-                            <p class="font-bold text-gray-400 text-lg">Siti Aminah</p>
-                            <p class="text-sm text-gray-400 font-medium">Selesai - Target Tercapai</p>
+                    <div class="lg:col-span-1">
+                        <div class="bg-blue-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+                            <div class="relative z-10">
+                                <h3 class="font-bold text-blue-100 mb-2 uppercase tracking-widest text-xs">Total Laporan Siap</h3>
+                                <p class="text-5xl font-black mb-6">{{ $patientsList->count() }} <span class="text-xl font-normal text-blue-200">File</span></p>
+                                <button onclick="document.querySelector('[data-target=\'view-patients\']').click()" class="w-full py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-colors shadow-lg">
+                                    Lihat Semua Pasien
+                                </button>
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
                         </div>
-                        <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+
+                        <div class="mt-6 bg-white rounded-3xl p-6 border border-blue-100 shadow-sm">
+                            <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-4 text-center">Butuh Perhatian</p>
+                            <div class="flex items-center gap-4 bg-red-50 p-4 rounded-2xl border border-red-100">
+                                <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white font-bold">1</div>
+                                <div>
+                                    <p class="font-bold text-red-900 text-sm">Hendra Wijaya</p>
+                                    <p class="text-xs text-red-600">Melewati 3 sesi latihan</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
-        </div>
 
-        <div class="lg:col-span-1">
-            <div class="bg-blue-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
-                <div class="relative z-10">
-                    <h3 class="font-bold text-blue-100 mb-2 uppercase tracking-widest text-xs">Total Laporan Siap</h3>
-                    <p class="text-5xl font-black mb-6">{{ $patientsList->count() }} <span class="text-xl font-normal text-blue-200">File</span></p>
-                    <button onclick="document.querySelector('[data-target=\'view-patients\']').click()" class="w-full py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-colors shadow-lg">
-                        Lihat Semua Pasien
-                    </button>
-                </div>
-                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-            </div>
-
-            <div class="mt-6 bg-white rounded-3xl p-6 border border-blue-100 shadow-sm">
-                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-4 text-center">Butuh Perhatian</p>
-                <div class="flex items-center gap-4 bg-red-50 p-4 rounded-2xl border border-red-100">
-                    <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white font-bold">1</div>
-                    <div>
-                        <p class="font-bold text-red-900 text-sm">Hendra Wijaya</p>
-                        <p class="text-xs text-red-600">Melewati 3 sesi latihan</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<div id="view-messages" class="view-section hidden fade-in h-[calc(100vh-180px)]">
+            <div id="view-messages" class="view-section hidden fade-in h-[calc(100vh-180px)]">
                 <div class="flex h-full bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden">
                     <div class="w-1/3 border-r border-blue-100 flex flex-col bg-blue-50/20">
                         <div class="p-4 border-b border-blue-100">
@@ -523,31 +519,26 @@
                             </div>
                         </div>
                         <div class="flex-1 overflow-y-auto custom-scrollbar">
-                            <div class="chat-contact p-4 bg-blue-50 border-l-4 border-blue-600 cursor-pointer transition-colors" onclick="changeChat(2, 'Bapak Slamet', 'https://i.pravatar.cc/150?u=1', this)">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative">
-                                        <img src="https://i.pravatar.cc/150?u=1" class="w-10 h-10 rounded-full">
-                                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex justify-between items-baseline">
-                                            <p class="font-bold text-blue-900 text-sm truncate">Bapak Slamet</p>
+                            @forelse($patientsList as $index => $patient)
+                                <div class="chat-contact p-4 {{ $index === 0 ? 'bg-blue-50 border-blue-600' : 'hover:bg-blue-50/50 border-transparent' }} border-l-4 cursor-pointer transition-colors" 
+                                     onclick="changeChat({{ $patient->user_id }}, '{{ addslashes($patient->user->name) }}', 'https://ui-avatars.com/api/?name={{ urlencode($patient->user->name) }}&background=2563eb&color=fff', this)">
+                                    <div class="flex items-center gap-3">
+                                        <div class="relative">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($patient->user->name) }}&background=2563eb&color=fff" class="w-10 h-10 rounded-full shadow-sm border border-blue-100">
+                                            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-baseline">
+                                                <p class="font-bold text-blue-900 text-sm truncate">{{ $patient->user->name }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="chat-contact p-4 hover:bg-blue-50/50 border-l-4 border-transparent cursor-pointer transition-colors" onclick="changeChat(3, 'Siti Aminah', 'https://i.pravatar.cc/150?u=2', this)">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative">
-                                        <img src="https://i.pravatar.cc/150?u=2" class="w-10 h-10 rounded-full opacity-70">
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex justify-between items-baseline">
-                                            <p class="font-bold text-gray-700 text-sm truncate">Siti Aminah</p>
-                                        </div>
-                                    </div>
+                            @empty
+                                <div class="p-6 text-center text-gray-400 text-sm font-semibold">
+                                    Belum ada pasien yang terdaftar.
                                 </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
                     
@@ -571,50 +562,6 @@
                                 <svg class="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
                             </button>
                         </form>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-teleconsultation" class="view-section hidden fade-in h-[calc(100vh-180px)]">
-                <div class="flex flex-col lg:flex-row h-full gap-6">
-                    <div class="flex-1 bg-gray-900 rounded-2xl shadow-xl overflow-hidden relative flex flex-col justify-between" id="videoContainer">
-                        <div class="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 z-10">
-                            <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                            LIVE
-                        </div>
-                        <div class="absolute top-4 right-4 bg-black/50 backdrop-blur text-white px-3 py-1 rounded-lg text-sm font-semibold z-10">
-                            Telekonsultasi Aktif
-                        </div>
-                        
-                        <div class="flex-1 flex items-center justify-center overflow-hidden">
-                            <video id="mainVideo" autoplay playsinline muted class="w-full h-full object-cover transform scale-x-[-1]"></video>
-                        </div>
-
-                        <div class="bg-gradient-to-t from-black/80 to-transparent p-6 pt-12 absolute bottom-0 w-full flex justify-center gap-4 z-10">
-                            <button id="btnToggleMic" class="w-14 h-14 rounded-full bg-gray-700/80 text-white flex items-center justify-center hover:bg-gray-600 transition-colors backdrop-blur border border-gray-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-                            </button>
-                            <button id="btnToggleCam" class="w-14 h-14 rounded-full bg-gray-700/80 text-white flex items-center justify-center hover:bg-gray-600 transition-colors backdrop-blur border border-gray-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                            </button>
-                            <button id="btnEndCall" class="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center hover:bg-red-700 transition-colors shadow-lg shadow-red-600/30">
-                                <svg class="w-6 h-6 transform rotate-[135deg]" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-blue-100 flex flex-col">
-                        <div class="p-4 border-b border-blue-100 bg-blue-50/50">
-                            <h3 class="font-extrabold text-blue-900">Catatan Medis</h3>
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col">
-                            <div class="mb-4">
-                                <p class="text-sm font-bold text-gray-700">Hendra Wijaya</p>
-                                <p class="text-xs text-red-500 font-bold mt-1">Status: Kritis (Drop-out Latihan)</p>
-                            </div>
-                            <textarea id="teleNotes" class="flex-1 w-full bg-yellow-50/50 border border-yellow-200 rounded-xl p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Ketik catatan sesi telekonsultasi di sini..."></textarea>
-                            <button class="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-xl font-bold shadow-md hover:bg-blue-700 transition-colors" onclick="document.getElementById('teleNotes').value = ''; showToast('Catatan berhasil disimpan ke Rekam Medis!')">Simpan Catatan</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -681,9 +628,10 @@
                 </div>
             </div>
         </div>
-<div id="modalAddPatient" class="fixed inset-0 z-[60] hidden">
-    <div class="absolute inset-0 bg-blue-900/40 backdrop-blur-sm" id="overlayAddPatient"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-blue-600 modal-pop">
+
+        <div id="modalAddPatient" class="fixed inset-0 z-[60] hidden">
+            <div class="absolute inset-0 bg-blue-900/40 backdrop-blur-sm" id="overlayAddPatient"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-blue-600 modal-pop">
                 <div class="px-6 py-4 border-b border-blue-50 flex justify-between items-center bg-blue-50/30">
                     <h3 class="text-xl font-extrabold text-blue-900">Tambah Pasien Baru</h3>
                     <button id="closeModalAddPatient" class="text-blue-400 hover:text-red-500 transition-colors">
@@ -731,16 +679,16 @@
             </div>
         </div>
 
-      <div id="modalAddProgram" class="fixed inset-0 z-[60] hidden">
-    <div class="absolute inset-0 bg-blue-900/40 backdrop-blur-sm" id="overlayAddProgram"></div>
-    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-blue-600 modal-pop">
+        <div id="modalAddProgram" class="fixed inset-0 z-[60] hidden">
+            <div class="absolute inset-0 bg-blue-900/40 backdrop-blur-sm" id="overlayAddProgram"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-blue-600 modal-pop">
                 <div class="px-6 py-4 border-b border-blue-50 flex justify-between items-center bg-blue-50/30">
                     <h3 class="text-xl font-extrabold text-blue-900">Buat Program Cepat</h3>
                     <button id="closeModalAddProgram" class="text-blue-400 hover:text-red-500 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
-<form id="formAddProgram" action="{{ route('doctor.assignment.store') }}" method="POST" class="p-6">
+                <form id="formAddProgram" action="{{ route('doctor.assignment.store') }}" method="POST" class="p-6">
                     @csrf
                     <div class="space-y-4">
                         <div>
@@ -774,6 +722,45 @@
                     <div class="mt-8 flex justify-end gap-3">
                         <button type="button" id="cancelModalAddProgram" class="px-5 py-2.5 text-blue-700 font-bold bg-white border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors">Batal</button>
                         <button type="submit" class="px-5 py-2.5 text-white font-bold bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-600/30 transition-colors">Generate Program</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="modalAddModule" class="fixed inset-0 z-[60] hidden">
+            <div class="absolute inset-0 bg-blue-900/40 backdrop-blur-sm" id="overlayAddModule"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border-t-4 border-blue-600 modal-pop">
+                <div class="px-6 py-4 border-b border-blue-50 flex justify-between items-center bg-blue-50/30">
+                    <h3 class="text-xl font-extrabold text-blue-900">Tambah Modul Latihan AI</h3>
+                    <button id="closeModalAddModule" class="text-blue-400 hover:text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <form id="formAddModule" action="/doctor/exercise/store" method="POST" class="p-6">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-blue-900 mb-1">Nama Latihan</label>
+                            <input type="text" name="name" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Misal: Jumping Jack">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-blue-900 mb-1">Deskripsi / Tujuan</label>
+                            <input type="text" name="description" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Misal: Melatih kekuatan otot kaki...">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-blue-900 mb-1">Landmarks (Titik Sendi)</label>
+                                <input type="text" name="landmarks" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Misal: 24, 26, 28">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-blue-900 mb-1">Target Sudut (&deg;)</label>
+                                <input type="text" name="target_angle" required class="w-full bg-blue-50 border border-blue-200 text-blue-900 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" placeholder="Misal: < 90 atau > 160">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-end gap-3">
+                        <button type="button" id="cancelModalAddModule" class="px-5 py-2.5 text-blue-700 font-bold bg-white border border-blue-200 rounded-xl hover:bg-blue-50 transition-colors">Batal</button>
+                        <button type="submit" class="px-5 py-2.5 text-white font-bold bg-blue-600 rounded-xl hover:bg-blue-700 shadow-md shadow-blue-600/30 transition-colors">Simpan Modul</button>
                     </div>
                 </form>
             </div>
@@ -840,7 +827,7 @@
                             </div>
                         </div>
                         
-                     <div class="pt-4 flex flex-col gap-3">
+                        <div class="pt-4 flex flex-col gap-3">
                             <div class="flex gap-3">
                                 <button class="flex-1 py-3 bg-white border-2 border-blue-600 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors" onclick="document.querySelector('[data-target=\'view-messages\']').click(); document.getElementById('closeSlideOver').click();">Chat Pasien</button>
                                 <button class="flex-1 py-3 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-colors" onclick="document.querySelector('[data-target=\'view-programs\']').click(); document.getElementById('closeSlideOver').click();">Edit Program</button>
@@ -854,12 +841,11 @@
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
 <script>
     // ==========================================
-    // 1. UTILITAS GLOBAL (Bisa dipanggil dari mana saja)
+    // 1. UTILITAS GLOBAL
     // ==========================================
     window.showToast = function(message, type = 'success') {
         const toastContainer = document.getElementById('toastContainer');
@@ -882,15 +868,11 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         // --- Notifikasi Server (Laravel) ---
-        @if(session('success'))
-            showToast("{{ session('success') }}", 'success');
-        @endif
-        @if($errors->any())
-            showToast("Error: {{ $errors->first() }}", 'error');
-        @endif
+        @if(session('success')) showToast("{{ session('success') }}", 'success'); @endif
+        @if($errors->any()) showToast("Error: {{ $errors->first() }}", 'error'); @endif
 
         // ==========================================
-        // 2. SISTEM NAVIGASI & SIDEBAR
+        // 2. SISTEM NAVIGASI & HEADER
         // ==========================================
         const navSystem = {
             views: document.querySelectorAll('.view-section'),
@@ -899,12 +881,10 @@
             overlay: document.getElementById('sidebarOverlay'),
             
             init() {
-                // Event Listener Sidebar Toggle
                 document.getElementById('openSidebarBtn')?.addEventListener('click', () => this.openSidebar());
                 document.getElementById('closeSidebarBtn')?.addEventListener('click', () => this.closeSidebar());
                 this.overlay?.addEventListener('click', () => this.closeSidebar());
 
-                // Event Listener Ganti Tab/Halaman
                 this.navBtns.forEach(btn => {
                     btn.addEventListener('click', (e) => this.switchTab(btn));
                 });
@@ -922,17 +902,14 @@
                 if(!targetId) return;
                 if(window.innerWidth < 768) this.closeSidebar();
 
-                // Reset semua tombol nav
                 this.navBtns.forEach(b => {
                     b.classList.remove('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
                     b.classList.add('text-gray-500', 'border-transparent');
                 });
                 
-                // Aktifkan tombol nav saat ini
                 btn.classList.add('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
                 btn.classList.remove('text-gray-500', 'border-transparent');
 
-                // Sembunyikan semua view, tampilkan yang ditarget
                 this.views.forEach(v => {
                     v.classList.add('hidden');
                     v.classList.remove('fade-in');
@@ -942,15 +919,11 @@
                 if(targetView) {
                     targetView.classList.remove('hidden');
                     setTimeout(() => targetView.classList.add('fade-in'), 10);
-                    
-                    // Trigger fungsi khusus berdasarkan halaman yang dibuka
                     if(targetId === 'view-dashboard') chartSystem.update();
-                    if(targetId === 'view-teleconsultation') teleSystem.start();
                 }
             }
         };
 
-        // Menu Dropdown Header (Notif & Profil)
         const headerSystem = {
             init() {
                 const notifBtn = document.getElementById('notifBtn');
@@ -980,16 +953,13 @@
         // ==========================================
         // 3. DATA PASIEN & TABEL (Filter, Paginasi)
         // ==========================================
-// ==========================================
-        // 3. DATA PASIEN & TABEL (Filter, Paginasi)
-        // ==========================================
         const patientData = {
             raw: {!! json_encode($patientsList->map(function($p) {
                 $type = 'lansia';
                 if (stripos($p->medical_diagnosis, 'stroke') !== false) $type = 'stroke';
                 if (stripos($p->medical_diagnosis, 'cedera') !== false || stripos($p->medical_diagnosis, 'acl') !== false) $type = 'cedera';
                 return [
-                    'raw_id' => $p->user_id, // Penting untuk link download
+                    'raw_id' => $p->user_id,
                     'id' => 'P-' . str_pad($p->id, 4, '0', STR_PAD_LEFT),
                     'name' => $p->user->name ?? 'Unknown',
                     'age' => \Carbon\Carbon::parse($p->date_of_birth)->age,
@@ -1032,6 +1002,9 @@
                 emptyState.classList.remove('flex');
 
                 const totalPages = Math.ceil(this.filtered.length / this.itemsPerPage);
+                if (this.currentPage > totalPages) this.currentPage = totalPages;
+                if (this.currentPage < 1) this.currentPage = 1;
+
                 const start = (this.currentPage - 1) * this.itemsPerPage;
                 const paginatedData = this.filtered.slice(start, start + this.itemsPerPage);
 
@@ -1073,7 +1046,8 @@
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end gap-2">
                             <button class="text-blue-400 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-100">Detail</button>
-                            <a href="/doctor/report/download/${p.raw_id}" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors flex items-center">
+                            
+                            <a href="/doctor/report/download/${p.raw_id}" target="_blank" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors flex items-center">
                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 Laporan
                             </a>
@@ -1109,7 +1083,6 @@
                 document.getElementById('btnNextPage')?.addEventListener('click', () => { this.currentPage++; this.render(); });
             }
         };
-        
 
         // ==========================================
         // 4. CHART JS (Grafik)
@@ -1160,6 +1133,7 @@
             init() {
                 this.setupModal('modalAddPatient', 'btnAddPatient', 'closeModalAddPatient', 'cancelModalAddPatient', 'overlayAddPatient');
                 this.setupModal('modalAddProgram', 'btnNewProgram', 'closeModalAddProgram', 'cancelModalAddProgram', 'overlayAddProgram');
+                this.setupModal('modalAddModule', 'btnNewModule', 'closeModalAddModule', 'cancelModalAddModule', 'overlayAddModule');
                 
                 // Form Submit Loading State
                 document.getElementById('formAddPatient')?.addEventListener('submit', function() {
@@ -1169,6 +1143,10 @@
                 document.getElementById('formAddProgram')?.addEventListener('submit', function() {
                     const btn = this.querySelector('button[type="submit"]');
                     btn.innerHTML = 'Memproses...'; btn.classList.add('opacity-70', 'cursor-not-allowed');
+                });
+                document.getElementById('formAddModule')?.addEventListener('submit', function() {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.innerHTML = 'Menyimpan...'; btn.classList.add('opacity-70', 'cursor-not-allowed');
                 });
 
                 // Event listener khusus untuk menutup modal detail pasien (Slide Over)
@@ -1192,7 +1170,10 @@
                 document.getElementById('detGender').innerText = p.gender === 'L' ? 'Laki-laki' : 'Perempuan';
                 document.getElementById('detDiagnosis').innerText = p.desc;
                 document.getElementById('detAccuracyTxt').innerText = `${p.accuracy}%`;
-                document.getElementById('btnDownloadReportDetail').href = `/doctor/report/download/${p.raw_id}`;
+                
+                // Set link download sesuai ID Pasien
+                const btnDownload = document.getElementById('btnDownloadReportDetail');
+                if(btnDownload) btnDownload.href = `/doctor/report/download/${p.raw_id}`;
 
                 const bar = document.getElementById('detAccuracyBar');
                 bar.className = `bg-${p.status === 'optimal' ? 'green' : (p.status === 'kurang' ? 'yellow' : 'red')}-500 h-2 rounded-full transition-all duration-1000`;
@@ -1220,13 +1201,21 @@
             input: document.getElementById('chatInput'),
             area: document.getElementById('chatArea'),
             myId: {{ Auth::id() ?? 1 }},
-            patientId: 2, 
+            patientId: {{ $patientsList->first()->user_id ?? 0 }}, 
             intervalId: null,
 
             init() {
                 if(!this.form) return;
                 
-                // Fungsi untuk mengganti target pasien chat (Dipanggil dari HTML onclick)
+                @if($patientsList->count() > 0)
+                    document.getElementById('chatHeaderName').innerText = "{{ $patientsList->first()->user->name }}";
+                    document.getElementById('chatHeaderImg').src = "https://ui-avatars.com/api/?name={{ urlencode($patientsList->first()->user->name) }}&background=2563eb&color=fff";
+                @else
+                    document.getElementById('chatHeaderName').innerText = "Belum ada pasien";
+                    document.getElementById('chatHeaderImg').src = "https://ui-avatars.com/api/?name=Kosong&background=ccc&color=fff";
+                    if(this.input) this.input.disabled = true;
+                @endif
+
                 window.changeChat = (id, name, avatar, el) => {
                     this.patientId = id; 
                     document.getElementById('chatHeaderName').innerText = name;
@@ -1241,12 +1230,10 @@
                     this.loadMessages();
                 };
 
-                // Jalankan polling
                 if(this.intervalId) clearInterval(this.intervalId);
                 this.intervalId = setInterval(() => this.loadMessages(), 2000);
                 this.loadMessages();
 
-                // Form Submit Kirim Pesan
                 this.form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     const msgText = this.input.value.trim();
@@ -1269,7 +1256,7 @@
                 });
             },
             loadMessages() {
-                if(!this.area) return;
+                if(!this.area || this.patientId === 0) return;
                 fetch(`/chat/fetch/${this.patientId}`)
                     .then(r => r.json())
                     .then(data => {
@@ -1299,60 +1286,6 @@
             }
         };
 
-        // ==========================================
-        // 7. TELEKONSULTASI (WebRTC / Kamera)
-        // ==========================================
-        const teleSystem = {
-            stream: null,
-            video: document.getElementById('mainVideo'),
-            isMicOn: true,
-            isCamOn: true,
-            
-            init() {
-                document.getElementById('btnToggleMic')?.addEventListener('click', (e) => this.toggleMedia('audio', e.currentTarget));
-                document.getElementById('btnToggleCam')?.addEventListener('click', (e) => this.toggleMedia('video', e.currentTarget));
-                document.getElementById('btnEndCall')?.addEventListener('click', () => {
-                    this.stop();
-                    showToast('Panggilan diakhiri', 'error');
-                    setTimeout(() => document.querySelector('[data-target="view-dashboard"]')?.click(), 1000);
-                });
-            },
-            start() {
-                if(this.stream) return;
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(stream => {
-                    this.stream = stream;
-                    if(this.video) this.video.srcObject = stream;
-                    showToast('Terhubung ke sesi telekonsultasi');
-                })
-                .catch(err => showToast('Gagal mengakses kamera/mikrofon', 'error'));
-            },
-            stop() {
-                if(this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.stream = null;
-                }
-                if(this.video) this.video.srcObject = null;
-            },
-            toggleMedia(type, btnElement) {
-                if(!this.stream) return;
-                const track = type === 'audio' ? this.stream.getAudioTracks()[0] : this.stream.getVideoTracks()[0];
-                if(track) {
-                    const isActive = type === 'audio' ? (this.isMicOn = !this.isMicOn) : (this.isCamOn = !this.isCamOn);
-                    track.enabled = isActive;
-                    if(isActive) {
-                        btnElement.classList.remove('bg-red-600', 'text-white');
-                        btnElement.classList.add('bg-gray-700/80', 'text-white');
-                        showToast(`${type === 'audio' ? 'Mikrofon' : 'Kamera'} aktif`);
-                    } else {
-                        btnElement.classList.remove('bg-gray-700/80', 'text-white');
-                        btnElement.classList.add('bg-red-600', 'text-white');
-                        showToast(`${type === 'audio' ? 'Mikrofon' : 'Kamera'} dimatikan`, 'error');
-                    }
-                }
-            }
-        };
-
         // --- EXPORT PDF BUTTON ---
         document.getElementById('btnExport')?.addEventListener('click', function() {
             const originalText = this.innerHTML;
@@ -1374,7 +1307,6 @@
         chartSystem.init();
         modalSystem.init();
         chatSystem.init();
-        teleSystem.init();
 
     }); // Akhir DOMContentLoaded
 </script>
