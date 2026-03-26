@@ -24,4 +24,4 @@ PhysioWeb dibangun di atas kerangka kerja Laravel 12 sebagai fondasi backend yan
 Subtema yang dipilih adalah Teknologi Kesehatan Digital dengan fokus pada aksesibilitas layanan rehabilitasi. Pemilihan ini didasari oleh urgensi permasalahan kesehatan nasional terkait rendahnya tingkat kepatuhan pasien terhadap program rehabilitasi fisik, serta keyakinan bahwa perpaduan antara AI, web modern, dan desain yang berpusat pada pengguna dapat menjadi jembatan antara keterbatasan infrastruktur kesehatan dengan kebutuhan pemulihan pasien yang tidak bisa menunggu.
 
 ## Link Website
-https://link-Website-hasil-deploy
+fisioterapi-production.up.railway.app
