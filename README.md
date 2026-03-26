@@ -4,7 +4,7 @@
 Universitas Jember
 
 ## Anggota Tim
-- Ketua: Muhammad Rizqi Ramadhani
+- Ketua: Muhammad Rizki Ramadhani
 - Anggota 1: Adam Rizqi Firdausi
 - Anggota 2: Darrel Fawwaz Agathon
 
