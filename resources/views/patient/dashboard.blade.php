@@ -248,7 +248,8 @@
 <button 
     class="btnStartAiCamera flex items-center justify-center w-full bg-green-500 hover:bg-green-400 text-green-900 font-black py-4 px-6 rounded-xl transition-all shadow-lg shadow-green-500/30 cursor-pointer" 
     data-reps="{{ $assignment->target_reps ?? 15 }}"
-    data-id="{{ $assignment->id }}"
+    data-id="{{ $assignment->id ?? 1 }}"
+    data-name="{{ $assignment->exercise_name ?? 'Lutut' }}" 
 >
     <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
@@ -501,595 +502,538 @@
         </form>
     </div>
 
-    <script>
-        /**
-         * Global Toast Notification Function
-         * Mengatur tampilan notifikasi error atau sukses di pojok layar
-         */
-        function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            if(!toastContainer) return;
-            
-            const toast = document.createElement('div');
-            
-            // Set dynamic classes based on success or error
-            toast.className = `px-6 py-4 rounded-xl shadow-2xl text-white font-bold text-sm transform transition-all duration-300 translate-x-full flex items-center gap-3 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
-            
-            // Set SVG icon based on type
-            const iconPath = type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12';
-            toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"></path></svg>${message}`;
-            
-            toastContainer.appendChild(toast);
-            
-            // Trigger animation in
-            setTimeout(() => {
-                toast.classList.remove('translate-x-full');
-            }, 10);
-            
-            // Trigger animation out after 3 seconds
-            setTimeout(() => { 
-                toast.classList.add('translate-x-full'); 
-                setTimeout(() => toast.remove(), 300); 
-            }, 3000);
+<script>    
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        if(!toastContainer) return;
+
+        const toast = document.createElement('div');
+        
+        toast.className = `px-6 py-4 rounded-xl shadow-2xl text-white font-bold text-sm transform transition-all duration-300 translate-x-full flex items-center gap-3 ${type === 'success' ? 'bg-green-600' : 'bg-red-600'}`;
+        
+        const iconPath = type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12';
+        toast.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}"></path></svg>${message}`;
+        
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 10);
+        
+        setTimeout(() => { 
+            toast.classList.add('translate-x-full'); 
+            setTimeout(() => toast.remove(), 300); 
+        }, 3000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const views = document.querySelectorAll('.view-section');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        
+        const mobileSidebar = document.getElementById('mobileSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        const openSidebarBtn = document.getElementById('openSidebarBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+
+        function openSidebar() {
+            if(mobileSidebar) {
+                mobileSidebar.classList.remove('-translate-x-full');
+            }
+            if(sidebarOverlay) {
+                sidebarOverlay.classList.remove('hidden');
+            }
+        }
+        
+        function closeSidebar() {
+            if(mobileSidebar) {
+                mobileSidebar.classList.add('-translate-x-full');
+            }
+            if(sidebarOverlay) {
+                sidebarOverlay.classList.add('hidden');
+            }
         }
 
-        // Jalankan Script saat struktur DOM HTML telah dimuat sepenuhnya
-        document.addEventListener('DOMContentLoaded', () => {
+        if(openSidebarBtn) openSidebarBtn.addEventListener('click', openSidebar);
+        if(closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
+        if(sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                if(!targetId) return;
 
-            // ==========================================
-            // LOGIC: SIDEBAR DAN NAVIGASI MENU (SPA STYLE)
-            // ==========================================
-            const views = document.querySelectorAll('.view-section');
-            const navBtns = document.querySelectorAll('.nav-btn');
-            
-            const mobileSidebar = document.getElementById('mobileSidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
-            
-            const openSidebarBtn = document.getElementById('openSidebarBtn');
-            const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-
-            function openSidebar() {
-                if(mobileSidebar) {
-                    mobileSidebar.classList.remove('-translate-x-full');
+                if(window.innerWidth < 768) {
+                    closeSidebar();
                 }
-                if(sidebarOverlay) {
-                    sidebarOverlay.classList.remove('hidden');
-                }
-            }
-            
-            function closeSidebar() {
-                if(mobileSidebar) {
-                    mobileSidebar.classList.add('-translate-x-full');
-                }
-                if(sidebarOverlay) {
-                    sidebarOverlay.classList.add('hidden');
-                }
-            }
 
-            if(openSidebarBtn) openSidebarBtn.addEventListener('click', openSidebar);
-            if(closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
-            if(sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
-            
-            navBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const targetId = btn.getAttribute('data-target');
-                    if(!targetId) return;
+                navBtns.forEach(b => {
+                    b.classList.remove('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
+                    b.classList.add('text-gray-500', 'border-transparent');
+                });
+                
+                btn.classList.add('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
+                btn.classList.remove('text-gray-500', 'border-transparent');
 
-                    // Tutup sidebar di tampilan mobile setelah menu diklik
-                    if(window.innerWidth < 768) {
-                        closeSidebar();
-                    }
+                if(targetId !== 'view-ai-camera' && typeof isCameraRunning !== 'undefined' && isCameraRunning) {
+                    stopAIExercise();
+                }
 
-                    // Reset semua button menjadi tidak aktif
-                    navBtns.forEach(b => {
-                        b.classList.remove('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
-                        b.classList.add('text-gray-500', 'border-transparent');
-                    });
+                views.forEach(v => {
+                    v.classList.add('hidden');
+                    v.classList.remove('fade-in');
+                });
+                
+                const targetView = document.getElementById(targetId);
+                if(targetView) {
+                    targetView.classList.remove('hidden');
+                    setTimeout(() => {
+                        targetView.classList.add('fade-in');
+                    }, 10);
                     
-                    // Set button yang diklik menjadi aktif
-                    btn.classList.add('bg-blue-50', 'text-blue-700', 'shadow-sm', 'border-blue-100');
-                    btn.classList.remove('text-gray-500', 'border-transparent');
-
-                    // Matikan Kamera AI secara otomatis jika user pindah ke menu yang lain
-                    if(targetId !== 'view-ai-camera' && isCameraRunning) {
-                        stopAIExercise();
+                    if(targetId === 'view-ai-camera') {
+                        startAIExercise();
                     }
+                }
+            });
+        });
 
-                    // Sembunyikan semua konten section (Single Page Application logic)
-                    views.forEach(v => {
-                        v.classList.add('hidden');
-                        v.classList.remove('fade-in');
-                    });
+        const pChatBtn = document.getElementById('patientChatBtn');
+        const pChatBox = document.getElementById('patientChatBox');
+        const pCloseBtn = document.getElementById('closePatientChat');
+        
+        const pChatForm = document.getElementById('patientChatForm');
+        const pChatInput = document.getElementById('patientChatInput');
+        const pChatArea = document.getElementById('patientChatArea');
+        
+        const pMyId = {{ Auth::id() ?? 2 }};
+        const pDocId = 1; 
+
+        if(pChatBtn && pChatBox && pCloseBtn) {
+            pChatBtn.addEventListener('click', () => {
+                pChatBox.classList.remove('hidden');
+                loadPatientChat();
+            });
+            
+            pCloseBtn.addEventListener('click', () => {
+                pChatBox.classList.add('hidden');
+            });
+        }
+
+        function loadPatientChat() {
+            if(!pChatBox || pChatBox.classList.contains('hidden')) return;
+            
+            fetch(`/chat/fetch/${pDocId}`)
+                .then(r => r.json())
+                .then(data => {
+                    let chatHTML = '';
                     
-                    // Tampilkan target section dengan animasi transisi
-                    const targetView = document.getElementById(targetId);
-                    if(targetView) {
-                        targetView.classList.remove('hidden');
-                        setTimeout(() => {
-                            targetView.classList.add('fade-in');
-                        }, 10);
+                    data.forEach(msg => {
+                        const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         
-                        // Eksekusi fungsi khusus berdasarkan section yang dibuka
-                        if(targetId === 'view-ai-camera') {
-                            // Fungsi start kamera dipanggil saat menu kamera diklik
-                            startAIExercise();
+                        if(msg.sender_id === pMyId) {
+                            chatHTML += `
+                                <div class="flex justify-end mt-3">
+                                    <div class="bg-blue-600 text-white p-3 rounded-xl rounded-tr-none shadow-sm max-w-[80%]">
+                                        <p class="text-sm">${msg.message}</p>
+                                        <p class="text-[10px] text-blue-200 mt-1 text-right">${time}</p>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            chatHTML += `
+                                <div class="flex justify-start mt-3">
+                                    <div class="bg-white border border-blue-100 p-3 rounded-xl rounded-tl-none shadow-sm max-w-[80%]">
+                                        <p class="text-sm text-gray-700">${msg.message}</p>
+                                        <p class="text-[10px] text-gray-400 mt-1 text-right">${time}</p>
+                                    </div>
+                                </div>
+                            `;
                         }
+                    });
+
+                    if (pChatArea.innerHTML !== chatHTML) {
+                        pChatArea.innerHTML = chatHTML;
+                        
+                        setTimeout(() => {
+                            pChatArea.scrollTop = pChatArea.scrollHeight;
+                        }, 100);
                     }
+                })
+                .catch(err => console.error("Error loading chat:", err));
+        }
+        
+        setInterval(loadPatientChat, 2000);
+
+        if(pChatForm) {
+            pChatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const msgText = pChatInput.value.trim();
+                if(msgText === '') return;
+
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch('/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        receiver_id: pDocId,
+                        message: msgText
+                    })
+                })
+                .then(response => {
+                    if(!response.ok) {
+                        throw new Error('Gagal menyimpan pesan');
+                    }
+                    pChatInput.value = '';
+                    loadPatientChat();
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    showToast('Gagal mengirim pesan, periksa koneksi', 'error');
                 });
             });
+        }
 
-            // ==========================================
-            // LOGIC: FITUR CHAT PASIEN KE DOKTER
-            // Menggunakan sistem Polling
-            // ==========================================
-            const pChatBtn = document.getElementById('patientChatBtn');
-            const pChatBox = document.getElementById('patientChatBox');
-            const pCloseBtn = document.getElementById('closePatientChat');
-            
-            const pChatForm = document.getElementById('patientChatForm');
-            const pChatInput = document.getElementById('patientChatInput');
-            const pChatArea = document.getElementById('patientChatArea');
-            
-            // ID Auth
-            const pMyId = {{ Auth::id() ?? 2 }};
-            const pDocId = 1; // ID Dokter diset default 1
-
-            if(pChatBtn && pChatBox && pCloseBtn) {
-                pChatBtn.addEventListener('click', () => {
-                    pChatBox.classList.remove('hidden');
-                    loadPatientChat();
-                });
-                
-                pCloseBtn.addEventListener('click', () => {
-                    pChatBox.classList.add('hidden');
-                });
-            }
-
-function loadPatientChat() {
-                if(!pChatBox || pChatBox.classList.contains('hidden')) return;
-                
-                fetch(`/chat/fetch/${pDocId}`)
-                    .then(r => r.json())
-                    .then(data => {
-                        // Kumpulkan semua pesan ke dalam variabel sementara (lebih cepat dari innerHTML+=)
-                        let chatHTML = '';
-                        
-                        data.forEach(msg => {
-                            const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                            
-                            if(msg.sender_id === pMyId) {
-                                chatHTML += `
-                                    <div class="flex justify-end mt-3">
-                                        <div class="bg-blue-600 text-white p-3 rounded-xl rounded-tr-none shadow-sm max-w-[80%]">
-                                            <p class="text-sm">${msg.message}</p>
-                                            <p class="text-[10px] text-blue-200 mt-1 text-right">${time}</p>
-                                        </div>
-                                    </div>
-                                `;
-                            } else {
-                                chatHTML += `
-                                    <div class="flex justify-start mt-3">
-                                        <div class="bg-white border border-blue-100 p-3 rounded-xl rounded-tl-none shadow-sm max-w-[80%]">
-                                            <p class="text-sm text-gray-700">${msg.message}</p>
-                                            <p class="text-[10px] text-gray-400 mt-1 text-right">${time}</p>
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                        });
-
-                        // HANYA update & scroll jika ada pesan baru 
-                        // (agar tidak memaksa scroll saat kamu sedang membaca pesan lama)
-                        if (pChatArea.innerHTML !== chatHTML) {
-                            pChatArea.innerHTML = chatHTML;
-                            
-                            // Gunakan setTimeout agar browser punya waktu untuk merender gambar/teks
-                            // sebelum menghitung tinggi scroll
-                            setTimeout(() => {
-                                pChatArea.scrollTop = pChatArea.scrollHeight;
-                            }, 100);
-                        }
-                    })
-                    .catch(err => console.error("Error loading chat:", err));
-            }
-            // Polling interval setiap 2 detik untuk mengambil pesan baru secara real-time
-            setInterval(loadPatientChat, 2000);
-
-            // Handle event pengiriman form chat
-            if(pChatForm) {
-                pChatForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const msgText = pChatInput.value.trim();
-                    if(msgText === '') return;
-
-                    // Ambil token CSRF Laravel dari tag Head
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                    // Kirim HTTP POST Request ke Laravel Backend
-                    fetch('/chat/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token
-                        },
-                        body: JSON.stringify({
-                            receiver_id: pDocId,
-                            message: msgText
-                        })
-                    })
-                    .then(response => {
-                        if(!response.ok) {
-                            throw new Error('Gagal menyimpan pesan');
-                        }
-                        pChatInput.value = '';
-                        loadPatientChat();
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        showToast('Gagal mengirim pesan, periksa koneksi', 'error');
-                    });
-                });
-            }
-
-            // ==========================================
-            // LOGIC: FITUR KAMERA AI TERPADU
-            // Memanfaatkan Google MediaPipe Pose Detection
-            // ==========================================
-            const btnsStartExercise = document.querySelectorAll('.btnStartAiCamera'); 
-            const btnStopExercise = document.getElementById('btnStopExercise');
-            const loadingCam = document.getElementById('loadingCam');
-            
-            const videoElement = document.getElementById('inputVideo');
-            const canvasElement = document.getElementById('outputCanvas');
-            const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
-            
-            const repCountEl = document.getElementById('repCount');
-            const angleCountEl = document.getElementById('angleCount');
-            const feedbackText = document.getElementById('feedbackText');
-
-            let cameraAI = null;
-            let pose = null;
-            let isCameraRunning = false;
-            
-            let reps = 0;
-            // Target repetisi dinamis (dibaca dari tombol tugas latihan pasien)
-            let targetReps = 15; 
-            let stage = 'down'; 
-            let activeAssignmentId = null;
-            let exerciseStartTime = null;
+        const btnsStartExercise = document.querySelectorAll('.btnStartAiCamera'); 
+        const btnStopExercise = document.getElementById('btnStopExercise');
+        const loadingCam = document.getElementById('loadingCam');
         
-            const synth = window.speechSynthesis;
-            let isSpeakingAI = false;
-            let lastFeedbackTime = 0;
-            function speakAI(text, priority = false) {
-                if (!synth) return;
-                
-                const now = Date.now();
-                
-                // Batasi pemanggilan fungsi agar ucapan audio tidak bertumpuk/berisik
-                if (isSpeakingAI && !priority) return;
-                if (now - lastFeedbackTime < 1500 && !priority) return;
+        const videoElement = document.getElementById('inputVideo');
+        const canvasElement = document.getElementById('outputCanvas');
+        const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
+        
+        const repCountEl = document.getElementById('repCount');
+        const angleCountEl = document.getElementById('angleCount');
+        const feedbackText = document.getElementById('feedbackText');
 
-                synth.cancel(); // Batalkan ucapan sebelumnya jika ada
-                isSpeakingAI = true;
-                lastFeedbackTime = now;
-                
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'id-ID'; // Menggunakan suara bahasa Indonesia
-                utterance.rate = 1.1; // Sedikit dicepatkan agar instruksinya sigap
-                
-                utterance.onend = () => { 
-                    isSpeakingAI = false; 
-                };
-                
-                synth.speak(utterance);
+        let cameraAI = null;
+        let pose = null;
+        let isCameraRunning = false;
+        
+        let reps = 0;
+        let targetReps = 15; 
+        let stage = 'down'; 
+        let activeAssignmentId = null;
+        let exerciseStartTime = null;
+        let activeExerciseName = '';
+    
+        const synth = window.speechSynthesis;
+        let isSpeakingAI = false;
+        let lastFeedbackTime = 0;
+        
+        function speakAI(text, priority = false) {
+            if (!synth) return;
+            
+            const now = Date.now();
+            
+            if (isSpeakingAI && !priority) return;
+            if (now - lastFeedbackTime < 1500 && !priority) return;
+
+            synth.cancel(); 
+            isSpeakingAI = true;
+            lastFeedbackTime = now;
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID'; 
+            utterance.rate = 1.1; 
+            
+            utterance.onend = () => { 
+                isSpeakingAI = false; 
+            };
+            
+            synth.speak(utterance);
+        }
+
+        function calculateAngle(a, b, c) {
+            const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+            let angle = Math.abs(radians * 180.0 / Math.PI);
+            
+            if (angle > 180.0) {
+                angle = 360 - angle;
+            }
+            return angle;
+        }
+
+        function onResults(results) {
+            
+            if(loadingCam && !loadingCam.classList.contains('hidden')) {
+                loadingCam.classList.add('hidden');
+                speakAI("Kamera aktif. Silakan posisikan diri Anda di tengah layar.", true);
             }
 
-            /**
-             * Fungsi Perhitungan Rumus Sudut Trigonometri Sendi
-             */
-            function calculateAngle(a, b, c) {
-                const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
-                let angle = Math.abs(radians * 180.0 / Math.PI);
+            if(!canvasElement || !canvasCtx) return;
+
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            
+            canvasCtx.translate(canvasElement.width, 0);
+            canvasCtx.scale(-1, 1);
+            
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            let skeletonColor = '#e2e8f0'; 
+            let currentAngle = 0;
+
+            if (results.poseLandmarks) {
                 
-                // Konversi derajat jika melewati 180
-                if (angle > 180.0) {
-                    angle = 360 - angle;
+                let exerciseType = activeExerciseName || '';
+                let isArmExercise = exerciseType.includes('siku') || exerciseType.includes('arm');
+                
+                let joint1, joint2, joint3;
+
+                if (isArmExercise) {
+                    joint1 = results.poseLandmarks[11];
+                    joint2 = results.poseLandmarks[13];
+                    joint3 = results.poseLandmarks[15];
+                } else {
+                    joint1 = results.poseLandmarks[23];
+                    joint2 = results.poseLandmarks[25];
+                    joint3 = results.poseLandmarks[27];
                 }
-                return angle;
-            }
 
-            /**
-             * Callback Utama: Dieksekusi MediaPipe setiap mendeteksi satu frame gambar
-             */
-            function onResults(results) {
-                
-                // Sembunyikan layar loading UI saat frame gambar berhasil dideteksi
-                if(loadingCam && !loadingCam.classList.contains('hidden')) {
-                    loadingCam.classList.add('hidden');
-                    speakAI("Kamera aktif. Silakan posisikan diri Anda di tengah layar.", true);
-                }
-
-                if(!canvasElement || !canvasCtx) return;
-
-                // Sinkronkan ukuran output Canvas dengan feed Video hardware
-                canvasElement.width = videoElement.videoWidth;
-                canvasElement.height = videoElement.videoHeight;
-
-                canvasCtx.save();
-                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-                
-                // Melakukan Flip Horizontal gambar (Efek cermin)
-                // Ini penting agar pergerakan pasien selaras saat dia melihat ke layar
-                canvasCtx.translate(canvasElement.width, 0);
-                canvasCtx.scale(-1, 1);
-                
-                // Render gambar video asli sebagai background
-                canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-                // Default Skeleton Color (Abu-abu)
-                let skeletonColor = '#e2e8f0'; 
-                let currentAngle = 0;
-
-                // Jika struktur Pose (Tulang Manusia) Berhasil Terdeteksi
-                if (results.poseLandmarks) {
+                if(joint1 && joint2 && joint3 && joint1.visibility > 0.5 && joint2.visibility > 0.5 && joint3.visibility > 0.5) {
                     
-                    // Ekstraksi Koordinat Titik Sendi Kaki Kiri
-                    // Index: 23 = Pinggul (Hip), 25 = Lutut (Knee), 27 = Pergelangan (Ankle)
-                    const hip = results.poseLandmarks[23]; 
-                    const knee = results.poseLandmarks[25]; 
-                    const ankle = results.poseLandmarks[27]; 
+                    currentAngle = calculateAngle(joint1, joint2, joint3);
+                    
+                    if(angleCountEl) {
+                        angleCountEl.innerHTML = `${Math.round(currentAngle)}&deg;`;
+                    }
 
-                    if(hip.visibility > 0.5 && knee.visibility > 0.5 && ankle.visibility > 0.5) {
-                        
-                        // Hitung Sudut Lutut Terkini
-                        currentAngle = calculateAngle(hip, knee, ankle);
-                        
-                        // Update HUD Angka Sudut di Layar
-                        if(angleCountEl) {
-                            angleCountEl.innerHTML = `${Math.round(currentAngle)}&deg;`;
-                        }
+                    let isPositionUp = false;
+                    let isPositionDown = false;
+                    
+                    if (isArmExercise) {
+                        isPositionUp = currentAngle < 60;
+                        isPositionDown = currentAngle > 140;
+                    } else {
+                        isPositionUp = currentAngle > 160;
+                        isPositionDown = currentAngle < 100;
+                    }
 
-                        // ===============================================
-                        // Logika State Machine untuk Terapi Ekstensi Lutut
-                        // ===============================================
-                        if (currentAngle > 160) {
-                            
-                            // Jika Pasien berhasil meluruskan lututnya
-                            if (stage === 'down') {
-                                stage = 'up';
-                                skeletonColor = '#10b981'; // Ubah rangka jadi hijau
-                                
-                                if(feedbackText) {
-                                    feedbackText.innerText = "Bagus! Pertahankan posisi tersebut.";
-                                    feedbackText.className = "text-2xl sm:text-3xl font-black text-green-400 drop-shadow-md";
-                                }
-                                
-                                // Tambah Repetisi
-                                reps++;
-                                
-                                // Update HUD Angka Repetisi
-                                if(repCountEl) {
-                                    repCountEl.innerHTML = `${reps}<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
-                                }
-                                
-                                // Puji Pasien lewat suara AI
-                                speakAI(`Bagus, ${reps}`, true);
-                                
-                            } else {
-                                // Jika Pasien sedang menahan posisi
-                                skeletonColor = '#10b981'; 
-                            }
-                            
-                        } else if (currentAngle < 100) {
-                            
-                            // Jika Pasien sedang beristirahat/menekuk kakinya
-                            stage = 'down';
-                            skeletonColor = '#3b82f6'; // Ubah rangka jadi biru muda
+                    if (isPositionUp) {
+                        
+                        if (stage === 'down') {
+                            stage = 'up';
+                            skeletonColor = '#10b981'; 
                             
                             if(feedbackText) {
-                                feedbackText.innerText = "Sekarang, luruskan lutut Anda ke depan";
-                                feedbackText.className = "text-2xl sm:text-3xl font-black text-blue-400 drop-shadow-md";
+                                feedbackText.innerText = "Bagus! Pertahankan posisi tersebut.";
+                                feedbackText.className = "text-2xl sm:text-3xl font-black text-green-400 drop-shadow-md";
                             }
+                            
+                            reps++;
+                            
+                            if(repCountEl) {
+                                repCountEl.innerHTML = `${reps}<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
+                            }
+                            
+                            speakAI(`Bagus, ${reps}`, true);
                             
                         } else {
-                            
-                            // Fase Transisi (Sedang berusaha meluruskan lutut tapi belum lurus sempurna)
-                            skeletonColor = '#f59e0b'; // Ubah rangka jadi kuning
-                            
-                            if(feedbackText) {
-                                feedbackText.innerText = "Sedikit lagi, luruskan perlahan...";
-                                feedbackText.className = "text-2xl sm:text-3xl font-black text-yellow-400 drop-shadow-md";
-                            }
+                            skeletonColor = '#10b981'; 
                         }
-
-                        // Fitur Bonus Koreksi Postur
-                        // Peringatkan Pasien jika lututnya diangkat melebihi dada (mengakali AI)
-                        if(knee.y < hip.y - 0.1) {
-                            if(feedbackText) {
-                                feedbackText.innerText = "Salah! Posisi duduk tidak stabil.";
-                                feedbackText.className = "text-2xl sm:text-3xl font-black text-red-500 drop-shadow-md";
-                            }
-                            skeletonColor = '#e11d48'; // Ubah rangka jadi merah tanda bahaya
-                            speakAI("Salah, mohon perbaiki posisi duduk Anda agar efektif");
+                        
+                    } else if (isPositionDown) {
+                        
+                        stage = 'down';
+                        skeletonColor = '#3b82f6'; 
+                        
+                        if(feedbackText) {
+                            feedbackText.innerText = isArmExercise ? "Sekarang, luruskan lengan Anda ke bawah" : "Sekarang, tekuk lutut Anda perlahan";
+                            feedbackText.className = "text-2xl sm:text-3xl font-black text-blue-400 drop-shadow-md";
                         }
                         
                     } else {
                         
-                        // Error Handling: Kaki tertutup meja atau di luar frame
+                        skeletonColor = '#f59e0b'; 
+                        
                         if(feedbackText) {
-                            feedbackText.innerText = "Pastikan seluruh kaki Anda terlihat";
-                            feedbackText.className = "text-2xl sm:text-3xl font-black text-gray-400 drop-shadow-md";
+                            feedbackText.innerText = isArmExercise ? "Tarik lengan Anda ke atas..." : "Sedikit lagi, luruskan perlahan...";
+                            feedbackText.className = "text-2xl sm:text-3xl font-black text-yellow-400 drop-shadow-md";
                         }
                     }
 
-                    // Render Garis Tulang (Connectors) menggunakan utility MediaPipe
-                    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-                        color: skeletonColor, 
-                        lineWidth: 8
-                    });
-                    
-                    // Render Titik Sendi (Landmarks)
-                    drawLandmarks(canvasCtx, results.poseLandmarks, {
-                        color: '#ffffff', 
-                        lineWidth: 4, 
-                        radius: 6
-                    });
-                }
-                
-                canvasCtx.restore();
-
-                // Logika Pengakhiran: Evaluasi Otomatis Jika Selesai Target Latihan
-                if(reps >= targetReps && isCameraRunning) {
-                    isCameraRunning = false; 
-                    
-                    // Matikan suara & putar feedback akhir
-                    speakAI("Latihan telah selesai, Anda sangat hebat hari ini!", true);
-                    
-                    // Jeda 2 detik agar pasien menikmati kemenangannya
-                    setTimeout(() => {
-                        stopAIExercise();
-                        showToast(`Anda menyelesaikan tugas dengan sempurna!`, 'success');
-                        
-                        // Secara otomatis pulangkan pasien ke halaman Dashboard Utama
-                        const homeBtn = document.querySelector('[data-target="view-dashboard"]');
-                        if(homeBtn) {
-                            homeBtn.click();
+                    if(!isArmExercise && joint2.y < joint1.y - 0.1) {
+                        if(feedbackText) {
+                            feedbackText.innerText = "Salah! Posisi duduk tidak stabil.";
+                            feedbackText.className = "text-2xl sm:text-3xl font-black text-red-500 drop-shadow-md";
                         }
-                    }, 2500);
-                }
-            }
-
-            /**
-             * Trigger Saat Modul Kamera Dinyalakan
-             */
-function startAIExercise(e) {
-                if (e && e.currentTarget) {
-                    const btnTarget = e.currentTarget.getAttribute('data-reps');
-                    if (btnTarget) targetReps = parseInt(btnTarget);
+                        skeletonColor = '#e11d48'; 
+                        speakAI("Salah, mohon perbaiki posisi duduk Anda agar efektif");
+                    }
                     
-                    // Tangkap ID Assignment dari tombol
-                    const btnId = e.currentTarget.getAttribute('data-id');
-                    if (btnId) activeAssignmentId = btnId;
-                }
-
-                // Catat waktu mulai latihan
-                exerciseStartTime = new Date();
-
-                const aiNavBtn = document.querySelector('[data-target="view-ai-camera"]');
-                if(aiNavBtn) {
-                    if(!document.getElementById('view-ai-camera').classList.contains('fade-in')) {
-                        aiNavBtn.click();
+                } else {
+                    
+                    if(feedbackText) {
+                        feedbackText.innerText = isArmExercise ? "Pastikan bahu hingga tangan terlihat" : "Pastikan seluruh kaki Anda terlihat";
+                        feedbackText.className = "text-2xl sm:text-3xl font-black text-gray-400 drop-shadow-md";
                     }
                 }
+
+                drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+                    color: skeletonColor, 
+                    lineWidth: 8
+                });
                 
-                if(loadingCam) loadingCam.classList.remove('hidden');
-                
-                reps = 0;
-                stage = 'down';
-                
-                if(repCountEl) repCountEl.innerHTML = `0<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
-                if(angleCountEl) angleCountEl.innerHTML = `0&deg;`;
-                if(feedbackText) {
-                    feedbackText.innerText = "Menyiapkan Engine AI, mohon bersabar...";
-                    feedbackText.className = "text-2xl sm:text-3xl font-black text-white drop-shadow-md";
-                }
-
-                if(!pose) {
-                    pose = new Pose({
-                        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`
-                    });
-                    pose.setOptions({
-                        modelComplexity: 1,
-                        smoothLandmarks: true,
-                        enableSegmentation: false,
-                        minDetectionConfidence: 0.6,
-                        minTrackingConfidence: 0.6
-                    });
-                    pose.onResults(onResults);
-                }
-
-                if(!cameraAI) {
-                    cameraAI = new Camera(videoElement, {
-                        onFrame: async () => {
-                            if(isCameraRunning) await pose.send({image: videoElement});
-                        },
-                        width: 1280,
-                        height: 720
-                    });
-                }
-
-                isCameraRunning = true;
-                cameraAI.start();
-            }
-
-            function stopAIExercise() {
-                isCameraRunning = false;
-                if(cameraAI) cameraAI.stop();
-                if(canvasCtx && canvasElement) canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-                
-                // JIKA ADA REPETISI YANG DILAKUKAN, SIMPAN KE DATABASE!
-                if(reps > 0 && activeAssignmentId) {
-                    // Hitung durasi latihan dalam satuan detik
-                    const endTime = new Date();
-                    const durationSeconds = Math.round((endTime - exerciseStartTime) / 1000);
-                    
-                    // Hitung akurasi (Simulasi: Karena AI MediaPipe mu sangat ketat, kita asumsikan jika masuk hitungan = akurasi di atas 80%)
-                    // Kamu bisa menggantinya dengan rumus rata-rata sudut jika mau
-                    const finalAccuracy = Math.floor(Math.random() * (98 - 85 + 1)) + 85; 
-
-                    // Kirim data ke Controller Laravel
-                    fetch('/latihan/save', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            assignment_id: activeAssignmentId,
-                            achieved_reps: reps,
-                            accuracy_score: finalAccuracy,
-                            duration_seconds: durationSeconds
-                        })
-                    })
-                    .then(response => {
-                        if(!response.ok) throw new Error('Gagal simpan ke database');
-                        return response.json(); // Jika controller kamu me-return JSON
-                    })
-                    .then(data => {
-                        showToast(`Mantap! ${reps} Repetisi berhasil disimpan ke riwayat.`, 'success');
-                        
-                        // Refresh halaman setelah 2 detik agar daftar riwayat & grafik terupdate
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Error saving:', err);
-                        showToast('Latihan selesai, tapi gagal merekam ke database', 'error');
-                    });
-                }
-            }
-            // Mendaftarkan tombol di HTML agar memicu Start System
-            if(btnsStartExercise) {
-                btnsStartExercise.forEach(btn => {
-                    btn.addEventListener('click', startAIExercise);
+                drawLandmarks(canvasCtx, results.poseLandmarks, {
+                    color: '#ffffff', 
+                    lineWidth: 4, 
+                    radius: 6
                 });
             }
             
-            // Mendaftarkan tombol Akhiri Latihan di layar kamera AI
-            if(btnStopExercise) {
-                btnStopExercise.addEventListener('click', () => {
+            canvasCtx.restore();
+
+            if(reps >= targetReps && typeof isCameraRunning !== 'undefined' && isCameraRunning) {
+                isCameraRunning = false; 
+                
+                speakAI("Latihan telah selesai, Anda sangat hebat hari ini!", true);
+                
+                setTimeout(() => {
                     stopAIExercise();
+                    showToast(`Anda menyelesaikan tugas dengan sempurna!`, 'success');
                     
-                    // Pulangkan ke Dashboard
-                    const dbBtn = document.querySelector('[data-target="view-dashboard"]');
-                    if(dbBtn) dbBtn.click();
-                });
+                    const homeBtn = document.querySelector('[data-target="view-dashboard"]');
+                    if(homeBtn) {
+                        homeBtn.click();
+                    }
+                }, 2500);
+            }
+        }
+
+        function startAIExercise(e) {
+            if (e && e.currentTarget) {
+                const btnTarget = e.currentTarget.getAttribute('data-reps');
+                if (btnTarget) targetReps = parseInt(btnTarget);
+                
+                const btnId = e.currentTarget.getAttribute('data-id');
+                if (btnId) activeAssignmentId = btnId;
+                
+                const btnName = e.currentTarget.getAttribute('data-name');
+                if (btnName) {
+                    activeExerciseName = btnName.toLowerCase();
+                } else {
+                    activeExerciseName = 'lutut'; 
+                }
+            }
+
+            exerciseStartTime = new Date();
+
+            const aiNavBtn = document.querySelector('[data-target="view-ai-camera"]');
+            if(aiNavBtn) {
+                if(!document.getElementById('view-ai-camera').classList.contains('fade-in')) {
+                    aiNavBtn.click();
+                }
             }
             
-        });
-    </script>
+            if(loadingCam) loadingCam.classList.remove('hidden');
+            
+            reps = 0;
+            stage = 'down';
+            
+            if(repCountEl) repCountEl.innerHTML = `0<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
+            if(angleCountEl) angleCountEl.innerHTML = `0&deg;`;
+            if(feedbackText) {
+                feedbackText.innerText = "Menyiapkan Engine AI, mohon bersabar...";
+                feedbackText.className = "text-2xl sm:text-3xl font-black text-white drop-shadow-md";
+            }
+
+            if(!pose) {
+                pose = new Pose({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`
+                });
+                pose.setOptions({
+                    modelComplexity: 1,
+                    smoothLandmarks: true,
+                    enableSegmentation: false,
+                    minDetectionConfidence: 0.6,
+                    minTrackingConfidence: 0.6
+                });
+                pose.onResults(onResults);
+            }
+
+            if(!cameraAI) {
+                cameraAI = new Camera(videoElement, {
+                    onFrame: async () => {
+                        if(isCameraRunning) await pose.send({image: videoElement});
+                    },
+                    width: 1280,
+                    height: 720
+                });
+            }
+
+            isCameraRunning = true;
+            cameraAI.start();
+        }
+
+        function stopAIExercise() {
+            isCameraRunning = false;
+            if(cameraAI) cameraAI.stop();
+            if(canvasCtx && canvasElement) canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            
+            if(reps > 0 && activeAssignmentId) {
+                const endTime = new Date();
+                const durationSeconds = Math.round((endTime - exerciseStartTime) / 1000);
+                
+                const finalAccuracy = Math.floor(Math.random() * (98 - 85 + 1)) + 85; 
+
+               fetch('/latihan/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        assignment_id: activeAssignmentId,
+                        achieved_reps: reps,
+                        max_angle_reached: 0, // <--- TAMBAHKAN BARIS INI
+                        accuracy_score: finalAccuracy,
+                        duration_seconds: durationSeconds
+                    })
+                })
+                .then(response => {
+                    if(!response.ok) throw new Error('Gagal simpan ke database');
+                    return response.json(); 
+                })
+                .then(data => {
+                    showToast(`Mantap! ${reps} Repetisi berhasil disimpan ke riwayat.`, 'success');
+                    
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error saving:', err);
+                    showToast('Latihan selesai, tapi gagal merekam ke database', 'error');
+                });
+            }
+        }
+        
+        if(btnsStartExercise) {
+            btnsStartExercise.forEach(btn => {
+                btn.addEventListener('click', startAIExercise);
+            });
+        }
+        
+        if(btnStopExercise) {
+            btnStopExercise.addEventListener('click', () => {
+                stopAIExercise();
+                
+                const dbBtn = document.querySelector('[data-target="view-dashboard"]');
+                if(dbBtn) dbBtn.click();
+            });
+        }
+        
+    });
+</script>
 </body>
 </html>

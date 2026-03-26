@@ -18,12 +18,12 @@ public function index($assignmentId)
 
         return view('latihan', compact('assignmentId', 'assignment'));
     }
-    public function saveSession(Request $request)
+   public function saveSession(Request $request)
     {
         $request->validate([
             'assignment_id' => 'required|exists:assignments,id',
             'achieved_reps' => 'required|numeric',
-            'max_angle_reached' => 'required|numeric',
+            'max_angle_reached' => 'nullable|numeric', // <-- Ubah required jadi nullable
             'accuracy_score' => 'required|numeric',
             'duration_seconds' => 'required|numeric',
         ]);
@@ -31,7 +31,7 @@ public function index($assignmentId)
         SessionLog::create([
             'assignment_id' => $request->assignment_id,
             'achieved_reps' => $request->achieved_reps,
-            'max_angle_reached' => $request->max_angle_reached,
+            'max_angle_reached' => $request->max_angle_reached ?? 0, // <-- Beri default 0 jika kosong
             'accuracy_score' => $request->accuracy_score,
             'duration_seconds' => $request->duration_seconds,
         ]);
