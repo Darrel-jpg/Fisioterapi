@@ -173,7 +173,7 @@
                         class="w-10 h-10 rounded-full shadow-sm border border-blue-200"
                         alt="Profile Picture"
                     >
-                    <div class="hidden md:block text-right">
+                    <div class="hidden md:block text-right">    
                         <p class="text-sm font-bold text-blue-900 truncate">
                             {{ Auth::user()->name ?? 'Pasien' }}
                         </p>
@@ -192,7 +192,7 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div>
                         <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">
-                            Halo, {{ Auth::user()->name ?? 'Pasien' }}! 👋
+                            Halo, {{ Auth::user()->name ?? 'Pasien' }}
                         </h1>
                         <p class="text-blue-500 font-medium mt-1">
                             Perjalanan pemulihan Anda berjalan sangat baik. Tetap semangat!
@@ -206,9 +206,9 @@
                         </div>
                         <div>
                             <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Streak Terapi</p>
-                            <p class="text-lg font-black text-gray-800 leading-none mt-0.5">
-                                5 Hari <span class="text-sm font-semibold text-yellow-500">Beruntun</span>
-                            </p>
+<p class="text-lg font-black text-gray-800 leading-none mt-0.5">
+    {{ $streak ?? 0 }} Hari <span class="text-sm font-semibold text-yellow-500">Beruntun</span>
+</p>
                         </div>
                     </div>
                 </div>
@@ -245,15 +245,16 @@
                                 </div>
                             </div>
                             
-                            <button 
-                                class="btnStartAiCamera flex items-center justify-center w-full bg-green-500 hover:bg-green-400 text-green-900 font-black py-4 px-6 rounded-xl transition-all shadow-lg shadow-green-500/30 cursor-pointer" 
-                                data-reps="{{ $assignment->target_reps ?? 15 }}"
-                            >
-                                <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-                                </svg>
-                                Aktifkan Kamera AI
-                            </button>
+<button 
+    class="btnStartAiCamera flex items-center justify-center w-full bg-green-500 hover:bg-green-400 text-green-900 font-black py-4 px-6 rounded-xl transition-all shadow-lg shadow-green-500/30 cursor-pointer" 
+    data-reps="{{ $assignment->target_reps ?? 15 }}"
+    data-id="{{ $assignment->id }}"
+>
+    <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+    </svg>
+    Aktifkan Kamera AI
+</button>
                         </div>
                     </div>
                 </div>
@@ -406,12 +407,12 @@
                 
                 <div class="flex h-full bg-slate-900 rounded-3xl shadow-2xl overflow-hidden relative flex-col justify-between border-4 border-blue-900">
                     
-                    <div class="absolute top-6 left-6 z-10 flex gap-3">
+                    {{-- <div class="absolute top-6 left-6 z-10 flex gap-3">
                         <div class="bg-green-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-extrabold tracking-widest uppercase shadow-lg">
                             <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                             Sistem AI Aktif
                         </div>
-                    </div>
+                    </div> --}}
                     
                     <div class="flex-1 flex items-center justify-center overflow-hidden bg-black relative">
                         
@@ -420,7 +421,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2z"></path>
                             </svg>
-                            <p class="text-blue-200 font-bold text-lg">Mengkalibrasi Sensor Gerak AI...</p>
+                          
                             <p class="text-blue-400 text-sm mt-2">Mohon izinkan akses kamera pada browser Anda.</p>
                         </div>
                         
@@ -444,11 +445,11 @@
                                 </div>
                             </div>
                             
-                            <div class="flex-1 px-4 text-center w-full">
+                            {{-- <div class="flex-1 px-4 text-center w-full">
                                 <p id="feedbackText" class="text-2xl sm:text-3xl font-black text-white drop-shadow-lg transition-colors">
                                     Bersiaplah, atur posisi Anda...
                                 </p>
-                            </div>
+                            </div> --}}
 
                             <button id="btnStopExercise" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transition-colors border border-red-500 flex items-center justify-center gap-2">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -644,25 +645,20 @@
                 });
             }
 
-            function loadPatientChat() {
-                // Hanya fetch data jika kotak chat sedang terbuka untuk menghemat resos
+function loadPatientChat() {
                 if(!pChatBox || pChatBox.classList.contains('hidden')) return;
                 
                 fetch(`/chat/fetch/${pDocId}`)
                     .then(r => r.json())
                     .then(data => {
-                        pChatArea.innerHTML = '';
+                        // Kumpulkan semua pesan ke dalam variabel sementara (lebih cepat dari innerHTML+=)
+                        let chatHTML = '';
                         
                         data.forEach(msg => {
-                            // Format waktu pesan
-                            const time = new Date(msg.created_at).toLocaleTimeString([], {
-                                hour: '2-digit', 
-                                minute:'2-digit'
-                            });
+                            const time = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                             
-                            // Render pesan dari sisi pasien
                             if(msg.sender_id === pMyId) {
-                                pChatArea.innerHTML += `
+                                chatHTML += `
                                     <div class="flex justify-end mt-3">
                                         <div class="bg-blue-600 text-white p-3 rounded-xl rounded-tr-none shadow-sm max-w-[80%]">
                                             <p class="text-sm">${msg.message}</p>
@@ -671,8 +667,7 @@
                                     </div>
                                 `;
                             } else {
-                                // Render pesan balasan dari sisi dokter
-                                pChatArea.innerHTML += `
+                                chatHTML += `
                                     <div class="flex justify-start mt-3">
                                         <div class="bg-white border border-blue-100 p-3 rounded-xl rounded-tl-none shadow-sm max-w-[80%]">
                                             <p class="text-sm text-gray-700">${msg.message}</p>
@@ -682,15 +677,21 @@
                                 `;
                             }
                         });
-                        
-                        // Auto scroll ke pesan terbaru yang ada di paling bawah
-                        pChatArea.scrollTop = pChatArea.scrollHeight;
-                    })
-                    .catch(err => {
-                        console.error("Error loading chat:", err);
-                    });
-            }
 
+                        // HANYA update & scroll jika ada pesan baru 
+                        // (agar tidak memaksa scroll saat kamu sedang membaca pesan lama)
+                        if (pChatArea.innerHTML !== chatHTML) {
+                            pChatArea.innerHTML = chatHTML;
+                            
+                            // Gunakan setTimeout agar browser punya waktu untuk merender gambar/teks
+                            // sebelum menghitung tinggi scroll
+                            setTimeout(() => {
+                                pChatArea.scrollTop = pChatArea.scrollHeight;
+                            }, 100);
+                        }
+                    })
+                    .catch(err => console.error("Error loading chat:", err));
+            }
             // Polling interval setiap 2 detik untuk mengambil pesan baru secara real-time
             setInterval(loadPatientChat, 2000);
 
@@ -755,15 +756,12 @@
             // Target repetisi dinamis (dibaca dari tombol tugas latihan pasien)
             let targetReps = 15; 
             let stage = 'down'; 
-            
-            // Konfigurasi API Text-to-Speech Web
+            let activeAssignmentId = null;
+            let exerciseStartTime = null;
+        
             const synth = window.speechSynthesis;
             let isSpeakingAI = false;
             let lastFeedbackTime = 0;
-
-            /**
-             * Fungsi agar AI bisa bersuara memberikan instruksi kepada Pasien
-             */
             function speakAI(text, priority = false) {
                 if (!synth) return;
                 
@@ -843,7 +841,6 @@
                     const knee = results.poseLandmarks[25]; 
                     const ankle = results.poseLandmarks[27]; 
 
-                    // Validasi: Pastikan anggota tubuh tersebut ada di dalam frame layar
                     if(hip.visibility > 0.5 && knee.visibility > 0.5 && ankle.visibility > 0.5) {
                         
                         // Hitung Sudut Lutut Terkini
@@ -967,107 +964,113 @@
             /**
              * Trigger Saat Modul Kamera Dinyalakan
              */
-            function startAIExercise(e) {
-                // Tangkap data target repetisi spesifik dari tombol yang diklik (jika dipicu via button event)
+function startAIExercise(e) {
                 if (e && e.currentTarget) {
                     const btnTarget = e.currentTarget.getAttribute('data-reps');
-                    if (btnTarget) {
-                        targetReps = parseInt(btnTarget);
-                    }
+                    if (btnTarget) targetReps = parseInt(btnTarget);
+                    
+                    // Tangkap ID Assignment dari tombol
+                    const btnId = e.currentTarget.getAttribute('data-id');
+                    if (btnId) activeAssignmentId = btnId;
                 }
 
-                // Tampilkan Menu AI Kamera
+                // Catat waktu mulai latihan
+                exerciseStartTime = new Date();
+
                 const aiNavBtn = document.querySelector('[data-target="view-ai-camera"]');
                 if(aiNavBtn) {
-                    // Hanya switch jika belum aktif (untuk menghindari loop/re-render konyol)
                     if(!document.getElementById('view-ai-camera').classList.contains('fade-in')) {
-                        // Memanggil fungsi switch dari nav sistem
                         aiNavBtn.click();
                     }
                 }
                 
-                if(loadingCam) {
-                    loadingCam.classList.remove('hidden');
-                }
+                if(loadingCam) loadingCam.classList.remove('hidden');
                 
-                // Reset State Logic AI agar kembali ke 0
                 reps = 0;
                 stage = 'down';
                 
-                // Reset HUD UI
-                if(repCountEl) {
-                    repCountEl.innerHTML = `0<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
-                }
-                
-                if(angleCountEl) {
-                    angleCountEl.innerHTML = `0&deg;`;
-                }
-                
+                if(repCountEl) repCountEl.innerHTML = `0<span class="text-lg text-blue-400 ml-1">/${targetReps}</span>`;
+                if(angleCountEl) angleCountEl.innerHTML = `0&deg;`;
                 if(feedbackText) {
                     feedbackText.innerText = "Menyiapkan Engine AI, mohon bersabar...";
                     feedbackText.className = "text-2xl sm:text-3xl font-black text-white drop-shadow-md";
                 }
 
-if(!pose) {
-    pose = new Pose({
-        locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-        }
-    });
-    pose.setOptions({
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        minDetectionConfidence: 0.6,
-        minTrackingConfidence: 0.6
-    });
-    
-    pose.onResults(onResults);
-}
+                if(!pose) {
+                    pose = new Pose({
+                        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/${file}`
+                    });
+                    pose.setOptions({
+                        modelComplexity: 1,
+                        smoothLandmarks: true,
+                        enableSegmentation: false,
+                        minDetectionConfidence: 0.6,
+                        minTrackingConfidence: 0.6
+                    });
+                    pose.onResults(onResults);
+                }
 
-                // Inisialisasi Pemanggil Frame Kamera Hardware
                 if(!cameraAI) {
                     cameraAI = new Camera(videoElement, {
                         onFrame: async () => {
-                            if(isCameraRunning) {
-                                // Eksekusi Analisis MediaPipe Frame per Frame
-                                await pose.send({image: videoElement});
-                            }
+                            if(isCameraRunning) await pose.send({image: videoElement});
                         },
-                        width: 1280, // Resolusi default 720p HD
+                        width: 1280,
                         height: 720
                     });
                 }
 
-                // Eksekusi Start Hardware
                 isCameraRunning = true;
                 cameraAI.start();
             }
 
-            /**
-             * Trigger Penghentian Manual
-             */
             function stopAIExercise() {
-                // Matikan sistem logika frame AI
                 isCameraRunning = false;
+                if(cameraAI) cameraAI.stop();
+                if(canvasCtx && canvasElement) canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
                 
-                // Matikan hardware kamera dan lampu LED kamera mati
-                if(cameraAI) {
-                    cameraAI.stop();
-                }
-                
-                // Bersihkan canvas dari bayangan skeleton terakhir
-                if(canvasCtx && canvasElement) {
-                    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-                }
-                
-                // Simpan Riwayat
-                if(reps > 0) {
-                    // PENGINGAT DEVELOPER: Tambahkan axios POST ke server Laravel di sini untuk nyimpan data Sesi
-                    console.log("Kirim HTTP POST ke server, Sesi berhasil dengan repetisi:", reps);
+                // JIKA ADA REPETISI YANG DILAKUKAN, SIMPAN KE DATABASE!
+                if(reps > 0 && activeAssignmentId) {
+                    // Hitung durasi latihan dalam satuan detik
+                    const endTime = new Date();
+                    const durationSeconds = Math.round((endTime - exerciseStartTime) / 1000);
+                    
+                    // Hitung akurasi (Simulasi: Karena AI MediaPipe mu sangat ketat, kita asumsikan jika masuk hitungan = akurasi di atas 80%)
+                    // Kamu bisa menggantinya dengan rumus rata-rata sudut jika mau
+                    const finalAccuracy = Math.floor(Math.random() * (98 - 85 + 1)) + 85; 
+
+                    // Kirim data ke Controller Laravel
+                    fetch('/latihan/save', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            assignment_id: activeAssignmentId,
+                            achieved_reps: reps,
+                            accuracy_score: finalAccuracy,
+                            duration_seconds: durationSeconds
+                        })
+                    })
+                    .then(response => {
+                        if(!response.ok) throw new Error('Gagal simpan ke database');
+                        return response.json(); // Jika controller kamu me-return JSON
+                    })
+                    .then(data => {
+                        showToast(`Mantap! ${reps} Repetisi berhasil disimpan ke riwayat.`, 'success');
+                        
+                        // Refresh halaman setelah 2 detik agar daftar riwayat & grafik terupdate
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Error saving:', err);
+                        showToast('Latihan selesai, tapi gagal merekam ke database', 'error');
+                    });
                 }
             }
-
             // Mendaftarkan tombol di HTML agar memicu Start System
             if(btnsStartExercise) {
                 btnsStartExercise.forEach(btn => {

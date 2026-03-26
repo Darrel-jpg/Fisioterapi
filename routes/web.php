@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/doctor/dashboard', [DashboardController::class, 'doctorDashboard'])->name('doctor.dashboard');
     Route::get('/patient/dashboard', [DashboardController::class, 'patientDashboard'])->name('patient.dashboard');
     Route::post('/doctor/patient/store', [DashboardController::class, 'storePatient'])->name('doctor.patient.store');
+    Route::get('/doctor/report/download/{patientId}', [DashboardController::class, 'downloadReport'])->name('doctor.report.download');
     Route::post('/doctor/assignment/store', [DashboardController::class, 'storeAssignment'])->name('doctor.assignment.store');
   Route::get('/latihan/{assignmentId}', [LatihanController::class, 'index'])->name('latihan');
     Route::post('/latihan/save', [LatihanController::class, 'saveSession'])->name('latihan.save');

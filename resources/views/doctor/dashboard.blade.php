@@ -446,73 +446,71 @@
                 </div>
             </div>
 
-            <div id="view-schedule" class="view-section hidden fade-in">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
-                    <div>
-                        <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">Jadwal & Laporan</h1>
-                        <p class="text-blue-500 font-medium mt-1">Tinjauan jadwal harian dan arsip laporan pasien.</p>
-                    </div>
+<div id="view-schedule" class="view-section hidden fade-in">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-blue-900 tracking-tight">Jadwal & Laporan</h1>
+        <p class="text-blue-500 font-medium mt-1">Manajemen waktu konsultasi dan pemantauan laporan harian.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-3xl shadow-sm border border-blue-100 p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-extrabold text-xl text-blue-900">Jadwal Sesi Hari Ini</h3>
+                    <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">3 Agenda</span>
                 </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-6">
-                        <h3 class="font-extrabold text-lg text-blue-900 mb-4">Jadwal Hari Ini</h3>
-                        <div class="space-y-4">
-                            <div class="flex border-l-4 border-blue-500 bg-blue-50/50 p-4 rounded-r-xl">
-                                <div class="w-16 font-extrabold text-blue-900">09:00</div>
-                                <div>
-                                    <p class="font-bold text-blue-900">Bapak Slamet</p>
-                                    <p class="text-xs text-blue-500 font-medium mt-0.5">Sesi Evaluasi AI (Online)</p>
-                                </div>
-                            </div>
-                            <div class="flex border-l-4 border-green-500 bg-green-50/50 p-4 rounded-r-xl opacity-60">
-                                <div class="w-16 font-extrabold text-green-900">11:30</div>
-                                <div>
-                                    <p class="font-bold text-green-900">Siti Aminah</p>
-                                    <p class="text-xs text-green-600 font-medium mt-0.5">Selesai - Target Tercapai</p>
-                                </div>
-                            </div>
-                            <div class="flex border-l-4 border-red-500 bg-red-50/50 p-4 rounded-r-xl">
-                                <div class="w-16 font-extrabold text-red-900">14:00</div>
-                                <div>
-                                    <p class="font-bold text-red-900">Hendra Wijaya</p>
-                                    <p class="text-xs text-red-500 font-medium mt-0.5">Konsultasi Khusus (Offline)</p>
-                                </div>
-                            </div>
+                <div class="space-y-4">
+                    <div class="group flex items-center p-5 rounded-2xl bg-blue-50/50 border border-transparent hover:border-blue-200 hover:bg-white transition-all cursor-pointer">
+                        <div class="w-20 font-black text-blue-600 text-lg">09:00</div>
+                        <div class="flex-1 border-l-2 border-blue-200 pl-6">
+                            <p class="font-bold text-blue-900 text-lg">Bapak Slamet</p>
+                            <p class="text-sm text-blue-500 font-medium">Evaluasi Post-Stroke (Video Call)</p>
+                        </div>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20">Mulai Sesi</button>
                         </div>
                     </div>
-                    
-                    <div class="bg-white rounded-2xl shadow-sm border border-blue-100 p-6">
-                        <h3 class="font-extrabold text-lg text-blue-900 mb-4">Arsip Laporan Terbaru</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl transition-colors border border-transparent hover:border-blue-100 cursor-pointer">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-blue-900 text-sm">Laporan_Bulan_Februari.pdf</p>
-                                        <p class="text-xs text-blue-500">Dibuat: Hari ini</p>
-                                    </div>
-                                </div>
-                                <button class="text-blue-600 hover:text-blue-800 font-bold text-sm" onclick="showToast('Mulai mengunduh file...')">Unduh</button>
-                            </li>
-                            <li class="flex items-center justify-between p-3 hover:bg-blue-50 rounded-xl transition-colors border border-transparent hover:border-blue-100 cursor-pointer">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-blue-900 text-sm">Data_Statistik_Klinik.xlsx</p>
-                                        <p class="text-xs text-blue-500">Dibuat: Kemarin</p>
-                                    </div>
-                                </div>
-                                <button class="text-blue-600 hover:text-blue-800 font-bold text-sm" onclick="showToast('Mulai mengunduh file...')">Unduh</button>
-                            </li>
-                        </ul>
+
+                    <div class="flex items-center p-5 rounded-2xl bg-gray-50 opacity-60">
+                        <div class="w-20 font-black text-gray-400 text-lg">11:30</div>
+                        <div class="flex-1 border-l-2 border-gray-200 pl-6">
+                            <p class="font-bold text-gray-400 text-lg">Siti Aminah</p>
+                            <p class="text-sm text-gray-400 font-medium">Selesai - Target Tercapai</p>
+                        </div>
+                        <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-blue-600 rounded-3xl shadow-xl p-8 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h3 class="font-bold text-blue-100 mb-2 uppercase tracking-widest text-xs">Total Laporan Siap</h3>
+                    <p class="text-5xl font-black mb-6">{{ $patientsList->count() }} <span class="text-xl font-normal text-blue-200">File</span></p>
+                    <button onclick="document.querySelector('[data-target=\'view-patients\']').click()" class="w-full py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-blue-50 transition-colors shadow-lg">
+                        Lihat Semua Pasien
+                    </button>
+                </div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="mt-6 bg-white rounded-3xl p-6 border border-blue-100 shadow-sm">
+                <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-4 text-center">Butuh Perhatian</p>
+                <div class="flex items-center gap-4 bg-red-50 p-4 rounded-2xl border border-red-100">
+                    <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white font-bold">1</div>
+                    <div>
+                        <p class="font-bold text-red-900 text-sm">Hendra Wijaya</p>
+                        <p class="text-xs text-red-600">Melewati 3 sesi latihan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <div id="view-messages" class="view-section hidden fade-in h-[calc(100vh-180px)]">
                 <div class="flex h-full bg-white rounded-2xl shadow-sm border border-blue-100 overflow-hidden">
@@ -842,9 +840,16 @@
                             </div>
                         </div>
                         
-                        <div class="pt-4 flex gap-3">
-                            <button class="flex-1 py-3 bg-white border-2 border-blue-600 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors" onclick="document.querySelector('[data-target=\'view-messages\']').click(); document.getElementById('closeSlideOver').click();">Chat Pasien</button>
-                            <button class="flex-1 py-3 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-colors" onclick="document.querySelector('[data-target=\'view-programs\']').click(); document.getElementById('closeSlideOver').click();">Edit Program</button>
+                     <div class="pt-4 flex flex-col gap-3">
+                            <div class="flex gap-3">
+                                <button class="flex-1 py-3 bg-white border-2 border-blue-600 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors" onclick="document.querySelector('[data-target=\'view-messages\']').click(); document.getElementById('closeSlideOver').click();">Chat Pasien</button>
+                                <button class="flex-1 py-3 bg-blue-600 border-2 border-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/30 hover:bg-blue-700 transition-colors" onclick="document.querySelector('[data-target=\'view-programs\']').click(); document.getElementById('closeSlideOver').click();">Edit Program</button>
+                            </div>
+                            
+                            <a id="btnDownloadReportDetail" href="#" class="w-full py-4 bg-green-600 text-white text-center font-black rounded-xl hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Unduh Laporan Rekap (.pdf)
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -975,12 +980,16 @@
         // ==========================================
         // 3. DATA PASIEN & TABEL (Filter, Paginasi)
         // ==========================================
+// ==========================================
+        // 3. DATA PASIEN & TABEL (Filter, Paginasi)
+        // ==========================================
         const patientData = {
             raw: {!! json_encode($patientsList->map(function($p) {
                 $type = 'lansia';
                 if (stripos($p->medical_diagnosis, 'stroke') !== false) $type = 'stroke';
                 if (stripos($p->medical_diagnosis, 'cedera') !== false || stripos($p->medical_diagnosis, 'acl') !== false) $type = 'cedera';
                 return [
+                    'raw_id' => $p->user_id, // Penting untuk link download
                     'id' => 'P-' . str_pad($p->id, 4, '0', STR_PAD_LEFT),
                     'name' => $p->user->name ?? 'Unknown',
                     'age' => \Carbon\Carbon::parse($p->date_of_birth)->age,
@@ -1003,15 +1012,13 @@
             },
             render() {
                 const tbody = document.getElementById('patientTableBody');
+                const emptyState = document.getElementById('emptyState');
                 if(!tbody) return;
 
-                // Update info ringkasan
                 document.getElementById('navPatientCount').innerText = this.raw.length;
                 document.getElementById('statTotalPatient').innerText = this.raw.length;
                 document.getElementById('statCritical').innerText = this.raw.filter(p => p.status === 'kritis').length;
 
-                // Handle Empty State
-                const emptyState = document.getElementById('emptyState');
                 if (this.filtered.length === 0) {
                     tbody.parentElement.classList.add('hidden');
                     emptyState.classList.remove('hidden');
@@ -1020,25 +1027,20 @@
                     return;
                 }
 
-                // Handle Paginasi
                 tbody.parentElement.classList.remove('hidden');
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
 
                 const totalPages = Math.ceil(this.filtered.length / this.itemsPerPage);
-                if (this.currentPage > totalPages) this.currentPage = totalPages;
-                if (this.currentPage < 1) this.currentPage = 1;
-
                 const start = (this.currentPage - 1) * this.itemsPerPage;
                 const paginatedData = this.filtered.slice(start, start + this.itemsPerPage);
 
                 tbody.innerHTML = '';
                 paginatedData.forEach(p => tbody.appendChild(this.createRow(p)));
 
-                // Update UI Paginasi
                 document.getElementById('paginationInfo').innerText = `Menampilkan ${start + 1} - ${Math.min(start + this.itemsPerPage, this.filtered.length)} dari ${this.filtered.length} pasien`;
                 document.getElementById('btnPrevPage').disabled = this.currentPage === 1;
-                document.getElementById('btnNextPage').disabled = this.currentPage === totalPages;
+                document.getElementById('btnNextPage').disabled = this.currentPage === totalPages || totalPages === 0;
             },
             createRow(p) {
                 const tr = document.createElement('tr');
@@ -1069,10 +1071,20 @@
                         <span class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-${badgeColor}-100 text-${badgeColor}-700 border border-${badgeColor}-200">${badgeText}</span>
                     </td>
                     <td class="px-6 py-4 text-right">
-                        <button class="text-blue-400 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-100">Detail</button>
+                        <div class="flex justify-end gap-2">
+                            <button class="text-blue-400 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-100">Detail</button>
+                            <a href="/doctor/report/download/${p.raw_id}" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors flex items-center">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Laporan
+                            </a>
+                        </div>
                     </td>
                 `;
-                tr.addEventListener('click', () => modalSystem.openPatientDetail(p));
+                tr.addEventListener('click', (e) => {
+                    if (!e.target.closest('a')) {
+                        modalSystem.openPatientDetail(p);
+                    }
+                });
                 return tr;
             },
             attachFilterEvents() {
@@ -1097,6 +1109,7 @@
                 document.getElementById('btnNextPage')?.addEventListener('click', () => { this.currentPage++; this.render(); });
             }
         };
+        
 
         // ==========================================
         // 4. CHART JS (Grafik)
@@ -1179,6 +1192,7 @@
                 document.getElementById('detGender').innerText = p.gender === 'L' ? 'Laki-laki' : 'Perempuan';
                 document.getElementById('detDiagnosis').innerText = p.desc;
                 document.getElementById('detAccuracyTxt').innerText = `${p.accuracy}%`;
+                document.getElementById('btnDownloadReportDetail').href = `/doctor/report/download/${p.raw_id}`;
 
                 const bar = document.getElementById('detAccuracyBar');
                 bar.className = `bg-${p.status === 'optimal' ? 'green' : (p.status === 'kurang' ? 'yellow' : 'red')}-500 h-2 rounded-full transition-all duration-1000`;

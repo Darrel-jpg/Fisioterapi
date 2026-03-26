@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PatientProfile;
 use App\Models\SessionLog;
 use App\Models\Assignment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -137,4 +138,34 @@ public function storePatient(Request $request)
 
         return back()->with('success', 'Program latihan berhasil diberikan ke pasien!');
     }
+public function downloadReport($patientId)
+{
+    // 1. Ambil profil pasien berdasarkan user_id
+    $patient = \App\Models\PatientProfile::with('user')->where('user_id', $patientId)->first();
+
+    if (!$patient) {
+        return "Data pasien tidak ditemukan.";
+    }
+
+    // 2. Ambil riwayat latihan (SessionLog) yang terhubung ke pasien ini
+    // Kita ambil melalui relasi Assignment
+    $sessions = \App\Models\SessionLog::with('assignment.exercise')
+                ->whereHas('assignment', function($q) use ($patientId) {
+                    $q->where('patient_id', $patientId);
+                })
+                ->latest()
+                ->get();
+
+    // 3. Siapkan data untuk PDF
+    $data = [
+        'patient' => $patient,
+        'sessions' => $sessions,
+        'date' => date('d/m/Y'),
+    ];
+
+    // 4. Load view dan download
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('doctor.report_pdf', $data);
+    
+    return $pdf->download('Laporan_Terapi_' . str_replace(' ', '_', $patient->user->name) . '.pdf');
+}
 }
